@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+
+<suite name="Siddhi-IO-S3-Test-Suite">
+    <test name="Siddhi-io-s3-tests" enabled="true" preserve-order="true" parallel="false">
+        <classes>
+            <class name="io.siddhi.extension.io.s3.sink.TestCaseOfS3Sink"/>
+            <class name="io.siddhi.extension.io.s3.source.TestCaseOfS3Source"/>
+        </classes>
+    </test>
+</suite>
