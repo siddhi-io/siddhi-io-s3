@@ -20,6 +20,9 @@ package io.siddhi.extension.io.s3.sink.internal.strategies.countbased;
 
 import io.siddhi.extension.io.s3.sink.internal.beans.EventObject;
 
+/**
+ * Holds a collection of events to be published to S3 via {@code CountBasedRotationStrategy}.
+ */
 public class CountBasedEventObject extends EventObject {
     private int offset;
 

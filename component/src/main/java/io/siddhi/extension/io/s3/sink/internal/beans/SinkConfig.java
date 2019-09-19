@@ -25,6 +25,9 @@ import io.siddhi.core.util.transport.OptionHolder;
 import io.siddhi.extension.io.s3.sink.internal.utils.S3Constants;
 import io.siddhi.query.api.definition.StreamDefinition;
 
+/**
+ * Holds sink configurations read from annotations.
+ */
 public class SinkConfig {
     private String storageClass = StorageClass.Standard.toString();
     private String credentialProviderClass = null;

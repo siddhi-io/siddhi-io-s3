@@ -22,7 +22,11 @@ import io.siddhi.extension.io.s3.sink.internal.beans.EventObject;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 
+/**
+ * {@code JsonSerializer} serializes the event payload into a JSON.
+ */
 public class JsonSerializer implements PayloadSerializer {
     @Override
     public String[] getTypes() {
@@ -40,6 +44,6 @@ public class JsonSerializer implements PayloadSerializer {
         for (Object event : eventObject.getEvents()) {
             sb.append(event).append("\n");
         }
-        return new ByteArrayInputStream(sb.toString().getBytes());
+        return new ByteArrayInputStream(sb.toString().getBytes(Charset.forName("UTF-8")));
     }
 }

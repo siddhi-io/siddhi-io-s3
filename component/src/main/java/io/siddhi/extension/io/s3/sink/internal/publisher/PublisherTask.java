@@ -18,10 +18,13 @@
 
 package io.siddhi.extension.io.s3.sink.internal.publisher;
 
-import io.siddhi.extension.io.s3.sink.internal.beans.EventObject;
 import io.siddhi.extension.io.s3.sink.internal.ServiceClient;
+import io.siddhi.extension.io.s3.sink.internal.beans.EventObject;
 import org.apache.log4j.Logger;
 
+/**
+ * {@code PublisherTask} is responsible for each event object to be uploaded to a S3 bucket.
+ */
 public class PublisherTask implements Runnable {
     private static final Logger logger = Logger.getLogger(PublisherTask.class);
 

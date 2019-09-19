@@ -21,6 +21,9 @@ package io.siddhi.extension.io.s3.sink.internal.beans;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Holds a collection of events to be written into a single S3 object.
+ */
 public abstract class EventObject {
     protected String objectPath;
     protected List<Object> events;

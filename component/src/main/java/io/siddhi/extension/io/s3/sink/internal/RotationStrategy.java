@@ -21,6 +21,9 @@ package io.siddhi.extension.io.s3.sink.internal;
 import io.siddhi.extension.io.s3.sink.S3Sink;
 import io.siddhi.extension.io.s3.sink.internal.beans.SinkConfig;
 
+/**
+ * {@code RotationStrategy} provides an interface to be implemented by strategies used to publish events to S3 buckets.
+ */
 public interface RotationStrategy {
 
     void init(SinkConfig config, ServiceClient client, S3Sink.SinkState taskQueue);

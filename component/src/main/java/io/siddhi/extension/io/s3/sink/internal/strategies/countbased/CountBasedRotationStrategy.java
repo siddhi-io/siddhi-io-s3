@@ -29,6 +29,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 
+/**
+ * Provides an strategy publish events to S3 using 'flush.type' parameter. This strategy publishes events to S3 bucket
+ * only when the events for particular object path reaches the count defined by 'flush.size' parameter.
+ */
 public class CountBasedRotationStrategy implements RotationStrategy {
 
     private static final Logger logger = Logger.getLogger(CountBasedRotationStrategy.class);

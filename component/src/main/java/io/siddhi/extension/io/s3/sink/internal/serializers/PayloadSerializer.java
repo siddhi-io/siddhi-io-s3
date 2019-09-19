@@ -22,6 +22,9 @@ import io.siddhi.extension.io.s3.sink.internal.beans.EventObject;
 
 import java.io.InputStream;
 
+/**
+ * The interface for serializers which can be used to serialize event payloads.
+ */
 public interface PayloadSerializer {
 
     String[] getTypes();

@@ -30,6 +30,7 @@ import com.amazonaws.services.s3.model.Grant;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.SetBucketVersioningConfigurationRequest;
+import io.siddhi.core.exception.SiddhiAppCreationException;
 import io.siddhi.extension.io.s3.sink.internal.beans.EventObject;
 import io.siddhi.extension.io.s3.sink.internal.beans.SinkConfig;
 import io.siddhi.extension.io.s3.sink.internal.serializers.PayloadSerializer;
@@ -43,6 +44,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.ServiceLoader;
 
+/**
+ * {@code ServiceClient} act as the proxy layer to work with the S3 endpoint.
+ */
 public class ServiceClient {
     private SinkConfig config;
     private AmazonS3 client;
@@ -52,8 +56,6 @@ public class ServiceClient {
         this.config = config;
         this.client = buildClient();
         this.serializer = getPayloadSerializer();
-
-        System.out.println(">>>>>>>>>>>>> init service client");
 
         // If the bucket is not available, create it.
         createBucketIfNotExist();
@@ -91,11 +93,16 @@ public class ServiceClient {
     private AWSCredentialsProvider getCredentialProvider() {
         if (config.getCredentialProviderClass() != null) {
             try {
-                return (AWSCredentialsProvider) this.getClass().getClassLoader().loadClass(config.getCredentialProviderClass()).newInstance();
-            } catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
-                e.printStackTrace();
+                return (AWSCredentialsProvider) this.getClass()
+                        .getClassLoader()
+                        .loadClass(config.getCredentialProviderClass())
+                        .newInstance();
+            } catch (InstantiationException | IllegalAccessException e) {
+                throw new SiddhiAppCreationException("Error while authenticating the user.", e);
+            } catch (ClassNotFoundException e) {
+                throw new SiddhiAppCreationException("Unable to find the credential provider class: " +
+                        config.getCredentialProviderClass());
             }
-            return null;
         }
 
         if (config.getAwsAccessKey() != null && config.getAwsSecretKey() != null) {
@@ -106,8 +113,6 @@ public class ServiceClient {
     }
 
     private void createBucketIfNotExist() {
-        System.out.println(">>>>>>>>>>> create bucket");
-
         // NOTE: The bucket.acl and versioning.enabled flags will only be effective if the bucket is not available.
 
         // Check if the bucket exists. If so skip the rest of the code.

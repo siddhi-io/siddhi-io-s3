@@ -18,6 +18,9 @@
 
 package io.siddhi.extension.io.s3.sink.internal.utils;
 
+/**
+ * Holds constants to be used in S3 sink.
+ */
 public class S3Constants {
     // Sink parameters
     public static final String CREDENTIAL_PROVIDER_CLASS = "credential.provider.class";
@@ -34,6 +37,7 @@ public class S3Constants {
     public static final String CONTENT_TYPE = "content.type";
     public static final String BUCKET_ACL = "bucket.acl";
 
+    // Defaults
     public static final String DEFAULT_CONTENT_TYPE = "application/octet-stream";
 
     private S3Constants() {

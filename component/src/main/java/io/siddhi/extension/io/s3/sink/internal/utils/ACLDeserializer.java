@@ -27,6 +27,12 @@ import com.amazonaws.services.s3.model.Permission;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * {@code ACLDeserializer} de-serializes bucket ACL from ACL definition and generate list of {@code Grant}s.
+ * The accepted ACL definition is as follows.
+ *
+ * Ex: 'canonical:<USER_UUID>:FullControl,group:LoDelivery:Read,email:john@doe.com:Write,email:jane@doe.com:Read'
+ */
 public class ACLDeserializer {
 
     private static final String CANONICAL_GRANTEE_TYPE = "canonical";
@@ -55,6 +61,9 @@ public class ACLDeserializer {
                     break;
                 case EMAIL_GRANTEE_TYPE:
                     grantList.add(new Grant(new EmailAddressGrantee(parts[1]), getPermission(parts[2])));
+                    break;
+                default:
+                    // Not a valid grantee, hence ignoring.
                     break;
             }
         }

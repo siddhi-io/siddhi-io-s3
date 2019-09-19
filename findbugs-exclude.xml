@@ -19,5 +19,8 @@
   -->
 
 <FindBugsFilter>
-
+    <Match>
+        <Package name="io.siddhi.extension.io.s3.sink.*" />
+        <Bug pattern="SIC_INNER_SHOULD_BE_STATIC" />
+    </Match>
 </FindBugsFilter>

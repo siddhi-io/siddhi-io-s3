@@ -161,5 +161,7 @@
         <apache.httpclient.version.range>[4.5.0,4.6.0)</apache.httpclient.version.range>
 
         <testng.version>6.9.10</testng.version>
+
+        <mavan.findbugsplugin.exclude.file>findbugs-exclude.xml</mavan.findbugsplugin.exclude.file>
     </properties>
 </project>
