@@ -39,6 +39,9 @@ public class SinkConfig {
     private String mapType;
     private String contentType = S3Constants.DEFAULT_CONTENT_TYPE;
     private String bucketAcl = "";
+    private String xmlEnclosingElement = "events";
+    private String textDelimiter = "\n";
+    private String binaryDelimiter = "\n";
     private int flushSize = -1;
     private boolean versioningEnabled = false;
 
@@ -76,6 +79,15 @@ public class SinkConfig {
                     break;
                 case S3Constants.BUCKET_ACL:
                     bucketAcl = optionHolder.validateAndGetStaticValue(S3Constants.BUCKET_ACL);
+                    break;
+                case S3Constants.XML_ENCLOSING_ELEMENT:
+                    xmlEnclosingElement = optionHolder.validateAndGetStaticValue(S3Constants.XML_ENCLOSING_ELEMENT);
+                    break;
+                case S3Constants.TEXT_DELIMITER:
+                    textDelimiter = optionHolder.validateAndGetStaticValue(S3Constants.TEXT_DELIMITER);
+                    break;
+                case S3Constants.BINARY_DELIMITER:
+                    binaryDelimiter = optionHolder.validateAndGetStaticValue(S3Constants.BINARY_DELIMITER);
                     break;
                 default:
                     // Ignore! Not a valid option.
@@ -146,6 +158,18 @@ public class SinkConfig {
 
     public String getBucketAcl() {
         return bucketAcl;
+    }
+
+    public String getXmlEnclosingElement() {
+        return xmlEnclosingElement;
+    }
+
+    public String getTextDelimiter() {
+        return textDelimiter;
+    }
+
+    public String getBinaryDelimiter() {
+        return binaryDelimiter;
     }
 
     public int getFlushSize() {

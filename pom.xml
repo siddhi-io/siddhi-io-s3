@@ -105,6 +105,11 @@
                 <classifier>runtime</classifier>
                 <version>${jacoco.plugin.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.google.code.gson</groupId>
+                <artifactId>gson</artifactId>
+                <version>${gson.version}</version>
+            </dependency>
 
             <!-- Amazon AWS SDK -->
             <dependency>
@@ -159,6 +164,8 @@
 
         <apache.httpclient.version>4.5.9</apache.httpclient.version>
         <apache.httpclient.version.range>[4.5.0,4.6.0)</apache.httpclient.version.range>
+
+        <json.version>2.8.5</json.version>
 
         <testng.version>6.9.10</testng.version>
 

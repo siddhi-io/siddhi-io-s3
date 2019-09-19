@@ -18,16 +18,19 @@
 
 package io.siddhi.extension.io.s3.sink.internal.serializers;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import io.siddhi.extension.io.s3.sink.internal.beans.EventObject;
 
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * {@code JsonSerializer} serializes the event payload into a JSON.
  */
-public class JsonSerializer implements PayloadSerializer {
+public class JsonSerializer extends PayloadSerializer {
     @Override
     public String[] getTypes() {
         return new String[]{"json"};
@@ -40,10 +43,10 @@ public class JsonSerializer implements PayloadSerializer {
 
     @Override
     public InputStream serialize(EventObject eventObject) {
-        StringBuilder sb = new StringBuilder();
+        List<JsonObject> jsonObjectList = new ArrayList<>();
         for (Object event : eventObject.getEvents()) {
-            sb.append(event).append("\n");
+            jsonObjectList.add(new JsonParser().parse(event.toString()).getAsJsonObject());
         }
-        return new ByteArrayInputStream(sb.toString().getBytes(Charset.forName("UTF-8")));
+        return serialize(new Gson().toJson(jsonObjectList));
     }
 }

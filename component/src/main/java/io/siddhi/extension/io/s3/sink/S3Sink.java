@@ -23,6 +23,7 @@ import io.siddhi.annotation.Extension;
 import io.siddhi.annotation.Parameter;
 import io.siddhi.annotation.util.DataType;
 import io.siddhi.core.config.SiddhiAppContext;
+import io.siddhi.core.event.Event;
 import io.siddhi.core.exception.ConnectionUnavailableException;
 import io.siddhi.core.stream.ServiceDeploymentInfo;
 import io.siddhi.core.stream.output.sink.Sink;
@@ -37,6 +38,7 @@ import io.siddhi.extension.io.s3.sink.internal.utils.S3Constants;
 import io.siddhi.query.api.definition.StreamDefinition;
 import org.apache.log4j.Logger;
 
+import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
@@ -139,6 +141,27 @@ import java.util.concurrent.LinkedBlockingQueue;
                         description = "Access control list for the bucket",
                         optional = true,
                         defaultValue = " "
+                ),
+                @Parameter(
+                        name = "xml.enclosing.element",
+                        type = DataType.STRING,
+                        description = "Enclosing element for XML payloads",
+                        optional = true,
+                        defaultValue = "events"
+                ),
+                @Parameter(
+                        name = "text.delimiter",
+                        type = DataType.STRING,
+                        description = "Delimiter for text payloads",
+                        optional = true,
+                        defaultValue = "\n"
+                ),
+                @Parameter(
+                        name = "binary.delimiter",
+                        type = DataType.STRING,
+                        description = "Delimiter for binary payloads",
+                        optional = true,
+                        defaultValue = "\n"
                 )
         },
         examples = {
@@ -163,7 +186,7 @@ public class S3Sink extends Sink<S3Sink.SinkState> {
      */
     @Override
     public Class[] getSupportedInputEventClasses() {
-        return new Class[]{String.class};
+        return new Class[]{String.class, Event.class, ByteBuffer.class};
     }
 
     /**

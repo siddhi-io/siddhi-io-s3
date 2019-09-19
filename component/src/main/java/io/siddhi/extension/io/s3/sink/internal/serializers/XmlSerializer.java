@@ -20,14 +20,12 @@ package io.siddhi.extension.io.s3.sink.internal.serializers;
 
 import io.siddhi.extension.io.s3.sink.internal.beans.EventObject;
 
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.nio.charset.Charset;
 
 /**
  * {@code XmlSerializer} serializes the event payload into an XML.
  */
-public class XmlSerializer implements PayloadSerializer {
+public class XmlSerializer extends PayloadSerializer {
     @Override
     public String[] getTypes() {
         return new String[]{"xml"};
@@ -41,9 +39,11 @@ public class XmlSerializer implements PayloadSerializer {
     @Override
     public InputStream serialize(EventObject eventObject) {
         StringBuilder sb = new StringBuilder();
+        sb.append(String.format("<%s>%n", config.getXmlEnclosingElement()));
         for (Object event : eventObject.getEvents()) {
-            sb.append(event).append("\n");
+            sb.append(event).append(String.format("%n"));
         }
-        return new ByteArrayInputStream(sb.toString().getBytes(Charset.forName("UTF-8")));
+        sb.append(String.format("</%s>", config.getXmlEnclosingElement()));
+        return serialize(sb.toString());
     }
 }

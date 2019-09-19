@@ -56,6 +56,7 @@ public class ServiceClient {
         this.config = config;
         this.client = buildClient();
         this.serializer = getPayloadSerializer();
+        this.serializer.setConfig(config);
 
         // If the bucket is not available, create it.
         createBucketIfNotExist();

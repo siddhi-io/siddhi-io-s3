@@ -19,33 +19,31 @@
 package io.siddhi.extension.io.s3.sink.internal.serializers;
 
 import io.siddhi.extension.io.s3.sink.internal.beans.EventObject;
-import io.siddhi.extension.io.s3.sink.internal.beans.SinkConfig;
 
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.io.Serializable;
-import java.nio.charset.Charset;
+import java.nio.ByteBuffer;
 
 /**
- * The interface for serializers which can be used to serialize event payloads.
+ * {@code BinarySerializer} serializes the event payload into a binary.
  */
-public abstract class PayloadSerializer implements Serializable {
-
-    protected static final Charset DEFAULT_CHARSET = Charset.forName("UTF-8");
-
-    protected SinkConfig config;
-
-    public abstract String[] getTypes();
-
-    public abstract String getExtension();
-
-    public abstract InputStream serialize(EventObject eventObject);
-
-    public void setConfig(SinkConfig config) {
-        this.config = config;
+public class BinarySerializer extends PayloadSerializer {
+    @Override
+    public String[] getTypes() {
+        return new String[]{"binary", "avro"};
     }
 
-    protected InputStream serialize(String string) {
-        return new ByteArrayInputStream(string.getBytes(DEFAULT_CHARSET));
+    @Override
+    public String getExtension() {
+        return "bin";
+    }
+
+    @Override
+    public InputStream serialize(EventObject eventObject) {
+        StringBuilder sb = new StringBuilder();
+        for (Object event : eventObject.getEvents()) {
+            sb.append(new String(((ByteBuffer) event).array(), DEFAULT_CHARSET))
+                    .append(config.getBinaryDelimiter());
+        }
+        return serialize(sb.toString());
     }
 }

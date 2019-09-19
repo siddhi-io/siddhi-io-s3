@@ -15,7 +15,7 @@
 # specific language governing permissions and limitations
 # under the License.
 #
-
+io.siddhi.extension.io.s3.sink.internal.serializers.BinarySerializer
 io.siddhi.extension.io.s3.sink.internal.serializers.JsonSerializer
 io.siddhi.extension.io.s3.sink.internal.serializers.TextSerializer
 io.siddhi.extension.io.s3.sink.internal.serializers.XmlSerializer

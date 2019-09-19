@@ -20,17 +20,15 @@ package io.siddhi.extension.io.s3.sink.internal.serializers;
 
 import io.siddhi.extension.io.s3.sink.internal.beans.EventObject;
 
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.nio.charset.Charset;
 
 /**
  * {@code TextSerializer} serializes the event payload into a text.
  */
-public class TextSerializer implements PayloadSerializer {
+public class TextSerializer extends PayloadSerializer {
     @Override
     public String[] getTypes() {
-        return new String[]{"text"};
+        return new String[]{"text", "csv"};
     }
 
     @Override
@@ -42,8 +40,8 @@ public class TextSerializer implements PayloadSerializer {
     public InputStream serialize(EventObject eventObject) {
         StringBuilder sb = new StringBuilder();
         for (Object event : eventObject.getEvents()) {
-            sb.append(event).append("\n");
+            sb.append(event).append(config.getTextDelimiter());
         }
-        return new ByteArrayInputStream(sb.toString().getBytes(Charset.forName("UTF-8")));
+        return serialize(sb.toString());
     }
 }

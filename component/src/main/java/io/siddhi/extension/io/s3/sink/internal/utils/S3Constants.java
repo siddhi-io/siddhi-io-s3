@@ -39,6 +39,9 @@ public class S3Constants {
 
     // Defaults
     public static final String DEFAULT_CONTENT_TYPE = "application/octet-stream";
+    public static final String XML_ENCLOSING_ELEMENT = "xml.enclosing.element";
+    public static final String TEXT_DELIMITER = "text.delimiter";
+    public static final String BINARY_DELIMITER = "binary.delimiter";
 
     private S3Constants() {
         // To prevent initialization of the class.
