@@ -108,16 +108,6 @@ public class SinkConfig {
 
         // Get stream id and the map type from stream definition.
         streamId = streamDefinition.getId();
-        mapType = streamDefinition.getAnnotations().stream()
-                .filter(e -> e.getName().equals("sink"))
-                .findFirst()
-                .get()
-                .getAnnotations()
-                .stream()
-                .filter(e -> e.getName().equals("map"))
-                .findFirst()
-                .map(a -> a.getElement("type"))
-                .orElseThrow(() -> new SiddhiAppCreationException("Sink mapper is required."));
     }
 
     public String getStorageClass() {
@@ -150,6 +140,10 @@ public class SinkConfig {
 
     public String getMapType() {
         return mapType;
+    }
+
+    public void setMapType(String mapType) {
+        this.mapType = mapType;
     }
 
     public String getContentType() {

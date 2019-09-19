@@ -166,8 +166,14 @@ import java.util.concurrent.LinkedBlockingQueue;
         },
         examples = {
                 @Example(
-                        syntax = " ",
-                        description = " "
+                        syntax = "@sink(type='s3', bucket.name='user-stream-bucket',object.path='bar/users', " +
+                                "credential.provider='com.amazonaws.auth.profile.ProfileCredentialsProvider', " +
+                                "flush.size='3',\n" +
+                                "    @map(type='json', enclosing.element='$.user', \n" +
+                                "        @payload(\"\"\"{\"name\": \"{{name}}\", \"age\": {{age}}}\"\"\"))) \n" +
+                                "define stream UserStream(name string, age int);  ",
+                        description = "This creates a S3 bucket named 'user-stream-bucket'. Then this will collect " +
+                                "3 events together and create a JSON object and save that in S3."
                 )
         }
 )
@@ -175,6 +181,7 @@ public class S3Sink extends Sink<S3Sink.SinkState> {
     private static final Logger logger = Logger.getLogger(S3Sink.class);
 
     private EventPublisher publisher;
+    private SinkConfig config;
 
     /**
      * Returns the list of classes which this sink can consume.
@@ -217,7 +224,7 @@ public class S3Sink extends Sink<S3Sink.SinkState> {
                                            ConfigReader configReader, SiddhiAppContext siddhiAppContext) {
         logger.debug("Initializing the S3 sink connector.");
         SinkState state = new SinkState();
-        SinkConfig config = new SinkConfig(optionHolder, streamDefinition);
+        config = new SinkConfig(optionHolder, streamDefinition);
 
         this.publisher = new EventPublisher(config, optionHolder, state);
 
@@ -248,6 +255,8 @@ public class S3Sink extends Sink<S3Sink.SinkState> {
      */
     @Override
     public void connect() throws ConnectionUnavailableException {
+        config.setMapType(getMapper().getType());
+        publisher.init();
         publisher.start();
         logger.debug("Event publisher started.");
     }

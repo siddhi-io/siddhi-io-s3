@@ -39,6 +39,8 @@ public class EventPublisher {
     private static final int CORE_POOL_SIZE = 10;
     private static final int MAX_POOL_SIZE = 20;
     private static final int KEEP_ALIVE_TIME_MS = 5000;
+    private final SinkConfig config;
+    private final S3Sink.SinkState state;
 
     private ServiceClient client;
     private RotationStrategy rotationStrategy;
@@ -47,9 +49,14 @@ public class EventPublisher {
 
     public EventPublisher(SinkConfig config, OptionHolder optionHolder, S3Sink.SinkState state) {
         this.optionHolder = optionHolder;
+        this.config = config;
+        this.state = state;
+    }
+
+    public void init() {
         this.client = new ServiceClient(config);
         this.rotationStrategy = getRotationStrategy();
-        this.rotationStrategy.init(config, this.client, state);
+        this.rotationStrategy.init(config, client, state);
 
         this.executor = new EventPublisherThreadPoolExecutor(CORE_POOL_SIZE, MAX_POOL_SIZE, KEEP_ALIVE_TIME_MS,
                 TimeUnit.MILLISECONDS, state.getTaskQueue());

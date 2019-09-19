@@ -35,7 +35,7 @@ import io.siddhi.extension.io.s3.sink.internal.beans.EventObject;
 import io.siddhi.extension.io.s3.sink.internal.beans.SinkConfig;
 import io.siddhi.extension.io.s3.sink.internal.serializers.PayloadSerializer;
 import io.siddhi.extension.io.s3.sink.internal.serializers.TextSerializer;
-import io.siddhi.extension.io.s3.sink.internal.utils.ACLDeserializer;
+import io.siddhi.extension.io.s3.sink.internal.utils.AclDeserializer;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -140,7 +140,7 @@ public class ServiceClient {
     }
 
     private AccessControlList buildBucketACL() {
-        List<Grant> grants = ACLDeserializer.deserialize(config.getBucketAcl());
+        List<Grant> grants = AclDeserializer.deserialize(config.getBucketAcl());
         if (grants.size() > 0) {
             AccessControlList acl = new AccessControlList();
             acl.grantAllPermissions(grants.toArray(new Grant[0]));
