@@ -68,14 +68,14 @@ public class CountBasedRotationStrategy implements RotationStrategy {
         incrementEventOffset(objectPath);
 
         if (eventObject.getEventCount() % config.getFlushSize() == 0) {
-            logger.info("Queuing the event object with " + eventObject.getEventCount() + " events. Offset: " +
+            logger.debug("Queuing the event object with " + eventObject.getEventCount() + " events. Offset: " +
                     eventObject.getOffset());
 
             taskQueue.add(new PublisherTask(eventObject, client));
             eventObjectMap.replace(objectPath,
                     new CountBasedEventObject(objectPath, getEventOffset(objectPath)));
 
-            logger.info("Queue contains " + taskQueue.size() + " tasks.");
+            logger.debug("Queue contains " + taskQueue.size() + " tasks.");
         }
     }
 

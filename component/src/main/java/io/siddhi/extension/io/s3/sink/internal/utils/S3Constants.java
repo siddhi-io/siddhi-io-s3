@@ -36,12 +36,12 @@ public class S3Constants {
     public static final String ROTATE_SCHEDULED_INTERVAL_MS = "rotate.scheduled.interval.ms";
     public static final String CONTENT_TYPE = "content.type";
     public static final String BUCKET_ACL = "bucket.acl";
-
-    // Defaults
-    public static final String DEFAULT_CONTENT_TYPE = "application/octet-stream";
     public static final String XML_ENCLOSING_ELEMENT = "xml.enclosing.element";
     public static final String TEXT_DELIMITER = "text.delimiter";
     public static final String BINARY_DELIMITER = "binary.delimiter";
+
+    // Defaults
+    public static final String DEFAULT_CONTENT_TYPE = "application/octet-stream";
 
     private S3Constants() {
         // To prevent initialization of the class.
