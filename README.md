@@ -1,52 +1,35 @@
-﻿siddhi-io-s3
+﻿Siddhi IO S3
 ======================================
 
-The siddhi-io-s3 is an extension which allows to publish events to Amazon AWS S3 buckets.
+The **siddhi-io-s3** is a <a target="_blank" href="https://siddhi.io/">Siddhi</a> extension which allows to publish events to Amazon AWS S3 buckets.
 
-Find some useful links below:
 
-* <a target="_blank" href="https://github.com/siddhi-io/siddhi-io-s3">Source code</a>
-* <a target="_blank" href="https://github.com/siddhi-io/siddhi-io-s3/releases">Releases</a>
-* <a target="_blank" href="https://github.com/siddhi-io/siddhi-io-s3/issues">Issue tracker</a>
+For information on <a target="_blank" href="https://siddhi.io/">Siddhi</a> and it's features refer <a target="_blank" href="https://siddhi.io/redirect/docs.html">Siddhi Documentation</a>. 
+
+## Download
+
+* Versions 1.x with group id `io.siddhi.extension.*` from <a target="_blank" href="https://mvnrepository.com/artifact/io.siddhi.extension.io.s3/siddhi-io-s3/">here</a>.
 
 ## Latest API Docs 
 
 Latest API Docs is <a target="_blank" href="https://siddhi-io.github.io/siddhi-io-s3/api/1.0.0">1.0.0</a>.
 
-## How to use 
+## Features
 
-**Using the extension in <a target="_blank" href="https://github.com/wso2/streaming-integrator">WSO2 Streaming Integrator</a>**
+* <a target="_blank" href="https://siddhi-io.github.io/siddhi-io-s3/api/1.0.0/#http-sink">http</a> *(<a target="_blank" href="https://siddhi-io.github.io/siddhi/documentation/siddhi-5.0/#sink">(Sink)</a>)*<br><div style="padding-left: 1em;"><p>This extension publishes events to Amazon AWS S3 bucket as aggregated payloads. The payloads can be aggregated as JSON, XML, Text, Binary, Avro and CSV. The events can be aggregated using the 'flush.size' parameter which defines the number of events to be aggregated into a single object. </p></div>
 
-* You can use this extension in the latest <a target="_blank" href="https://github.com/wso2/streaming-integrator/releases">WSO2 Streaming Integrator</a>. 
+## Dependencies 
 
-* This extension is shipped by default with WSO2 Streaming Integrator, if you wish to use an alternative version of this extension you can replace the component <a target="_blank" href="https://github.com/siddhi-io/siddhi-io-s3/releases">jar</a> that can be found in the `<STREAMING_INTEGRATOR_HOME>/lib` directory.
+There are no other dependencies needed for this extension. 
 
-**Using the extension as a [java library](https://siddhi-io.github.io/siddhi/documentation/siddhi-5.x/user-guide-5.x/#using-siddhi-as-a-java-library)**
+## Installation
 
-* This extension can be added as a maven dependency along with other Siddhi dependencies to your project.
+For installing this extension on various siddhi execution environments refer Siddhi documentation section on <a target="_blank" href="https://siddhi.io/redirect/add-extensions.html">adding extensions</a>.
 
-```
-     <dependency>
-        <groupId>io.siddhi.extension.io.s3</groupId>
-        <artifactId>siddhi-io-s3</artifactId>
-        <version>x.x.x</version>
-     </dependency>
-```
+## Support and Contribution
 
-**Using the extension in [Local Microservice Siddhi Depoloyment](https://siddhi-io.github.io/siddhi/documentation/siddhi-5.x/user-guide-5.x/#using-siddhi-as-local-micro-service)**
+* We encourage users to ask questions and get support via <a target="_blank" href="https://stackoverflow.com/questions/tagged/siddhi">StackOverflow</a>, make sure to add the `siddhi` tag to the issue for better response.
 
-**Using the extension in [Docker Microservice Siddhi Depoloyment](https://siddhi-io.github.io/siddhi/documentation/siddhi-5.x/user-guide-5.x/#using-siddhi-as-docker-micro-service)**
+* If you find any issues related to the extension please report them on <a target="_blank" href="https://github.com/siddhi-io/siddhi-execution-math/issues">the issue tracker</a>.
 
-**Using the extension in [Kubernetes Microservice Siddhi Depoloyment](https://siddhi-io.github.io/siddhi/documentation/siddhi-5.x/user-guide-5.x/#using-siddhi-as-kubernetes-micro-service)**
-
-## Contact Us
-
-* Post your questions with the ["Siddhi"](http://stackoverflow.com/search?q=siddhi) tag in [Stackoverflow](http://stackoverflow.com/search?q=siddhi). 
-* For questions and feedback please connect via the [Siddhi user Google group](https://groups.google.com/forum/#!forum/siddhi-user).
-* Engage in community development through [Siddhi dev Google group](https://groups.google.com/forum/#!forum/siddhi-dev). 
-
-Find the detail information on asking questions, providing feedback, reporting issues, building and contributing code on [How to contribute?](https://siddhi-io.github.io/siddhi/contribution/) section.
-
-[WSO2](https://wso2.com/) provides production, and query support for Siddhi and its [extensions](https://siddhi-io.github.io/siddhi/extensions/). For more details contact via [http://wso2.com/support/](http://wso2.com/support?utm_source=gitanalytics&utm_campaign=gitanalytics_Jul17)
-
-Siddhi is joint research project initiated by [WSO2](http://wso2.com) and [University of Moratuwa](http://www.mrt.ac.lk/web/), Sri Lanka.
+* For production support and other contribution related information refer <a target="_blank" href="https://siddhi.io/community/">Siddhi Community</a> documentation.

@@ -57,8 +57,8 @@ public class AclDeserializer {
             }
             Permission permission = getPermission(parts[2]);
             if (permission == null) {
-                logger.warn("Invalid permission '" + parts[2] + "' found. " +
-                        "Possible values are , FULL_CONTROLREAD, WRITE, READ_ACP, and WRITE_ACP.");
+                logger.warn("Invalid bucket permission '" + parts[2] + "' specified in grant " + grantString +
+                        " in the bucket ACL. Possible values are FULL_CONTROL, READ, WRITE, READ_ACP, and WRITE_ACP.");
                 continue;
             }
 
@@ -69,8 +69,9 @@ public class AclDeserializer {
                 case GROUP_GRANTEE_TYPE:
                     GroupGrantee groupGrantee = getGroupGrantee(parts[1]);
                     if (groupGrantee == null) {
-                        logger.warn("Invalid group grantee '" + parts[1] + "' specified. " +
-                                "Possible values are AllUsers, AuthenticatedUsers, and LogDelivery.");
+                        logger.warn("Invalid group grantee '" + parts[1] + "' specified in grant " + grantString  +
+                                " in the bucket ACL. Possible values are AllUsers, AuthenticatedUsers, and " +
+                                "LogDelivery.");
                         continue;
                     }
                     grantList.add(new Grant(getGroupGrantee(parts[1]), getPermission(parts[2])));
@@ -80,8 +81,8 @@ public class AclDeserializer {
                     break;
                 default:
                     // Not a valid grantee, hence ignoring.
-                    logger.warn("Invalid grantee '" + parts[0] +
-                            "' specified. Possible values are canonical, group, and email.");
+                    logger.warn("Invalid grantee '" + parts[0] + "' specified in grant " + grantString +
+                            " in the bucket ACL. Possible values are canonical, group, and email.");
                     break;
             }
         }

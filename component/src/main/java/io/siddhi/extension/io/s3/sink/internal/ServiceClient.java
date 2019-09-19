@@ -33,6 +33,7 @@ import com.amazonaws.services.s3.model.SetBucketVersioningConfigurationRequest;
 import io.siddhi.core.exception.SiddhiAppCreationException;
 import io.siddhi.extension.io.s3.sink.internal.beans.EventObject;
 import io.siddhi.extension.io.s3.sink.internal.beans.SinkConfig;
+import io.siddhi.extension.io.s3.sink.internal.serializers.MapperTypes;
 import io.siddhi.extension.io.s3.sink.internal.serializers.PayloadSerializer;
 import io.siddhi.extension.io.s3.sink.internal.serializers.TextSerializer;
 import io.siddhi.extension.io.s3.sink.internal.utils.AclDeserializer;
@@ -157,13 +158,15 @@ public class ServiceClient {
 
     private PayloadSerializer getPayloadSerializer() {
         ServiceLoader<PayloadSerializer> loader = ServiceLoader.load(PayloadSerializer.class);
-        for (PayloadSerializer serializer : loader) {
-            List<String> types = Arrays.asList(serializer.getTypes());
-            if (types.contains(config.getMapType())) {
-                return serializer;
+        MapperTypes mapperType = MapperTypes.forName(config.getMapType());
+        if (mapperType != null) {
+            for (PayloadSerializer serializer : loader) {
+                List<MapperTypes> mapperTypes = Arrays.asList(serializer.getTypes());
+                if (mapperTypes.contains(mapperType)) {
+                    return serializer;
+                }
             }
         }
-
         // If no serializer is found, use text serializer as default.
         return new TextSerializer();
     }

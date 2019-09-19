@@ -32,8 +32,8 @@ import java.util.List;
  */
 public class JsonSerializer extends PayloadSerializer {
     @Override
-    public String[] getTypes() {
-        return new String[]{"json"};
+    public MapperTypes[] getTypes() {
+        return new MapperTypes[]{MapperTypes.JSON};
     }
 
     @Override

@@ -27,8 +27,8 @@ import java.io.InputStream;
  */
 public class XmlSerializer extends PayloadSerializer {
     @Override
-    public String[] getTypes() {
-        return new String[]{"xml"};
+    public MapperTypes[] getTypes() {
+        return new MapperTypes[]{MapperTypes.XML};
     }
 
     @Override

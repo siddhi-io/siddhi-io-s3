@@ -35,7 +35,7 @@ public abstract class PayloadSerializer implements Serializable {
 
     protected SinkConfig config;
 
-    public abstract String[] getTypes();
+    public abstract MapperTypes[] getTypes();
 
     public abstract String getExtension();
 

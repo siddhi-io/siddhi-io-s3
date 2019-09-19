@@ -28,8 +28,8 @@ import java.nio.ByteBuffer;
  */
 public class BinarySerializer extends PayloadSerializer {
     @Override
-    public String[] getTypes() {
-        return new String[]{"binary", "avro"};
+    public MapperTypes[] getTypes() {
+        return new MapperTypes[]{MapperTypes.Binary, MapperTypes.Avro};
     }
 
     @Override

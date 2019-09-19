@@ -18,30 +18,33 @@
 
 package io.siddhi.extension.io.s3.sink.internal.serializers;
 
-import io.siddhi.extension.io.s3.sink.internal.beans.EventObject;
-
-import java.io.InputStream;
-
 /**
- * {@code TextSerializer} serializes the event payload into a text.
+ * Enumeration for mapper types.
  */
-public class TextSerializer extends PayloadSerializer {
-    @Override
-    public MapperTypes[] getTypes() {
-        return new MapperTypes[]{MapperTypes.Text, MapperTypes.CSV};
+public enum MapperTypes {
+    Binary("binary"),
+    Avro("avro"),
+    JSON("json"),
+    Text("text"),
+    XML("xml"),
+    CSV("csv");
+
+    private final String name;
+
+    MapperTypes(String name) {
+        this.name = name;
     }
 
-    @Override
-    public String getExtension() {
-        return "txt";
-    }
-
-    @Override
-    public InputStream serialize(EventObject eventObject) {
-        StringBuilder sb = new StringBuilder();
-        for (Object event : eventObject.getEvents()) {
-            sb.append(event).append(config.getTextDelimiter());
+    public static MapperTypes forName(String mapperTypeName) {
+        for (MapperTypes mapperType : MapperTypes.values()) {
+            if (mapperType.getName().equals(mapperTypeName)) {
+                return mapperType;
+            }
         }
-        return serialize(sb.toString());
+        return null;
+    }
+
+    public String getName() {
+        return name;
     }
 }
