@@ -21,10 +21,8 @@ package io.siddhi.extension.io.s3.sink.internal.publisher;
 import io.siddhi.core.util.transport.DynamicOptions;
 import io.siddhi.core.util.transport.OptionHolder;
 import io.siddhi.extension.io.s3.sink.S3Sink;
-import io.siddhi.extension.io.s3.sink.internal.RotationStrategy;
 import io.siddhi.extension.io.s3.sink.internal.ServiceClient;
 import io.siddhi.extension.io.s3.sink.internal.beans.SinkConfig;
-import io.siddhi.extension.io.s3.sink.internal.strategies.countbased.CountBasedRotationStrategy;
 import io.siddhi.extension.io.s3.sink.internal.utils.S3Constants;
 import org.apache.log4j.Logger;
 
@@ -43,7 +41,6 @@ public class EventPublisher {
     private final S3Sink.SinkState state;
 
     private ServiceClient client;
-    private RotationStrategy rotationStrategy;
     private OptionHolder optionHolder;
     private EventPublisherThreadPoolExecutor executor;
 
@@ -55,8 +52,6 @@ public class EventPublisher {
 
     public void init() {
         this.client = new ServiceClient(config);
-        this.rotationStrategy = getRotationStrategy();
-        this.rotationStrategy.init(config, client, state);
 
         this.executor = new EventPublisherThreadPoolExecutor(CORE_POOL_SIZE, MAX_POOL_SIZE, KEEP_ALIVE_TIME_MS,
                 TimeUnit.MILLISECONDS, state.getTaskQueue());
@@ -69,8 +64,9 @@ public class EventPublisher {
 
     public void publish(Object payload, DynamicOptions dynamicOptions, S3Sink.SinkState state) {
         String objectPath = optionHolder.validateAndGetOption(S3Constants.OBJECT_PATH).getValue(dynamicOptions);
-        logger.debug("Queuing the event for publishing: " + payload);
-        rotationStrategy.queueEvent(objectPath, payload);
+        state.getTaskQueue().add(new PublisherTask(client, objectPath, payload,
+                state.getEventIncrementer().incrementAndGet()));
+        logger.debug("The event is being added to the queue. Will be published to S3 shortly.");
     }
 
     public void shutdown() {
@@ -78,11 +74,5 @@ public class EventPublisher {
         if (executor != null) {
             executor.shutdown();
         }
-    }
-
-    private RotationStrategy getRotationStrategy() {
-        RotationStrategy strategy = new CountBasedRotationStrategy();
-        logger.debug(strategy.getName() + " rotation strategy is selected.");
-        return strategy;
     }
 }

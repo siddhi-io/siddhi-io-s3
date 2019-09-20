@@ -69,7 +69,7 @@ public class AclDeserializer {
                 case GROUP_GRANTEE_TYPE:
                     GroupGrantee groupGrantee = getGroupGrantee(parts[1]);
                     if (groupGrantee == null) {
-                        logger.warn("Invalid group grantee '" + parts[1] + "' specified in grant " + grantString  +
+                        logger.warn("Invalid group grantee '" + parts[1] + "' specified in grant " + grantString +
                                 " in the bucket ACL. Possible values are AllUsers, AuthenticatedUsers, and " +
                                 "LogDelivery.");
                         continue;

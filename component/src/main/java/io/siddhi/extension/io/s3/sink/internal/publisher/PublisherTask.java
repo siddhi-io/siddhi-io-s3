@@ -19,7 +19,6 @@
 package io.siddhi.extension.io.s3.sink.internal.publisher;
 
 import io.siddhi.extension.io.s3.sink.internal.ServiceClient;
-import io.siddhi.extension.io.s3.sink.internal.beans.EventObject;
 import org.apache.log4j.Logger;
 
 /**
@@ -29,16 +28,20 @@ public class PublisherTask implements Runnable {
     private static final Logger logger = Logger.getLogger(PublisherTask.class);
 
     private final ServiceClient client;
-    private EventObject eventObject;
+    private final int offset;
 
-    public PublisherTask(EventObject eventObject, ServiceClient client) {
-        this.eventObject = eventObject;
+    private Object payload;
+    private String objectPath;
+
+    public PublisherTask(ServiceClient client, String objectPath, Object payload, int offset) {
         this.client = client;
+        this.objectPath = objectPath;
+        this.payload = payload;
+        this.offset = offset;
     }
 
     @Override
     public void run() {
-        logger.debug("Publishing event object: " + eventObject);
-        client.uploadObject(eventObject);
+        client.uploadObject(objectPath, payload, offset);
     }
 }

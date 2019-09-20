@@ -16,35 +16,41 @@
  * under the License.
  */
 
-package io.siddhi.extension.io.s3.sink.internal.serializers;
+package io.siddhi.extension.io.s3.sink.internal.utils;
 
 /**
  * Enumeration for mapper types.
  */
 public enum MapperTypes {
-    Binary("binary"),
-    Avro("avro"),
-    JSON("json"),
-    Text("text"),
-    XML("xml"),
-    CSV("csv");
+    Binary("binary", "bin"),
+    Avro("avro", "bin"),
+    CSV("csv", "csv"),
+    JSON("json", "json"),
+    XML("xml", "xml"),
+    Text("text", "txt");
 
-    private final String name;
+    private final String mapName;
+    private final String extension;
 
-    MapperTypes(String name) {
-        this.name = name;
+    MapperTypes(String mapName, String extension) {
+        this.mapName = mapName;
+        this.extension = extension;
     }
 
-    public static MapperTypes forName(String mapperTypeName) {
+    public static MapperTypes forName(String mapperName) {
         for (MapperTypes mapperType : MapperTypes.values()) {
-            if (mapperType.getName().equals(mapperTypeName)) {
+            if (mapperType.getMapName().equalsIgnoreCase(mapperName)) {
                 return mapperType;
             }
         }
-        return null;
+        return MapperTypes.Text;
     }
 
-    public String getName() {
-        return name;
+    public String getMapName() {
+        return mapName;
+    }
+
+    public String getExtension() {
+        return extension;
     }
 }

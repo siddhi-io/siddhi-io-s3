@@ -43,6 +43,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * {@code S3Sink} Handles publishing events to Amazon AWS S3 bucket.
@@ -107,13 +108,6 @@ import java.util.concurrent.LinkedBlockingQueue;
                         defaultValue = "standard"
                 ),
                 @Parameter(
-                        name = "flush.size",
-                        type = DataType.INT,
-                        description = "Maximum number of events to be written into a file",
-                        optional = true,
-                        defaultValue = "1"
-                ),
-                @Parameter(
                         name = "content.type",
                         type = DataType.STRING,
                         description = "Content type of the event",
@@ -129,25 +123,13 @@ import java.util.concurrent.LinkedBlockingQueue;
                         defaultValue = "EMPTY_STRING"
                 ),
                 @Parameter(
-                        name = "xml.enclosing.element",
+                        name = "node.id",
                         type = DataType.STRING,
-                        description = "Enclosing element for XML payloads",
+                        description = "The node ID of the current publisher. This needs to be unique for each " +
+                                "publisher instance as it may cause object overwrites while uploading the objects " +
+                                "to same S3 bucket from different publishers.",
                         optional = true,
-                        defaultValue = "events"
-                ),
-                @Parameter(
-                        name = "text.delimiter",
-                        type = DataType.STRING,
-                        description = "Delimiter for text payloads",
-                        optional = true,
-                        defaultValue = "\n"
-                ),
-                @Parameter(
-                        name = "binary.delimiter",
-                        type = DataType.STRING,
-                        description = "Delimiter for binary payloads",
-                        optional = true,
-                        defaultValue = "\n"
+                        defaultValue = "EMPTY_STRING"
                 )
         },
         examples = {
@@ -275,11 +257,11 @@ public class S3Sink extends Sink<S3Sink.SinkState> {
      */
     public class SinkState extends State {
         private BlockingQueue<Runnable> taskQueue;
-        private Map<String, Object> stateMaps;
+        private AtomicInteger eventIncrementer;
 
         public SinkState() {
             this.taskQueue = new LinkedBlockingQueue<>();
-            this.stateMaps = new HashMap<>();
+            this.eventIncrementer = new AtomicInteger();
         }
 
         @Override
@@ -291,26 +273,22 @@ public class S3Sink extends Sink<S3Sink.SinkState> {
         public Map<String, Object> snapshot() {
             Map<String, Object> state = new HashMap<>();
             state.put("taskQueue", taskQueue);
-            state.put("stateMaps", stateMaps);
+            state.put("eventIncrementer", eventIncrementer);
             return state;
         }
 
         @Override
         public void restore(Map<String, Object> state) {
             taskQueue = (BlockingQueue<Runnable>) state.get("taskQueue");
-            stateMaps = (Map<String, Object>) state.get("stateMaps");
+            eventIncrementer = (AtomicInteger) state.get("eventIncrementer");
         }
 
         public BlockingQueue<Runnable> getTaskQueue() {
             return taskQueue;
         }
 
-        public Object getStateMap(String key) {
-            return stateMaps.get(key);
-        }
-
-        public void setStateMaps(String key, Object map) {
-            stateMaps.put(key, map);
+        public AtomicInteger getEventIncrementer() {
+            return eventIncrementer;
         }
     }
 }

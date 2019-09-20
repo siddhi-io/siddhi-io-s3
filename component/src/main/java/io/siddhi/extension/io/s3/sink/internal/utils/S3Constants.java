@@ -27,18 +27,13 @@ public class S3Constants {
     public static final String AWS_ACCESS_KEY = "aws.access.key";
     public static final String AWS_SECRET_KEY = "aws.secret.key";
     public static final String BUCKET_NAME = "bucket.name";
+    public static final String BUCKET_ACL = "bucket.acl";
+    public static final String NODE_ID = "node.id";
+    public static final String CONTENT_TYPE = "content.type";
+    public static final String STORAGE_CLASS = "storage.class";
     public static final String AWS_REGION = "aws.region";
     public static final String VERSIONING_ENABLED = "versioning.enabled";
     public static final String OBJECT_PATH = "object.path";
-    public static final String STORAGE_CLASS = "storage.class";
-    public static final String FLUSH_SIZE = "flush.size";
-    public static final String ROTATE_INTERVAL_MS = "rotate.interval.ms";
-    public static final String ROTATE_SCHEDULED_INTERVAL_MS = "rotate.scheduled.interval.ms";
-    public static final String CONTENT_TYPE = "content.type";
-    public static final String BUCKET_ACL = "bucket.acl";
-    public static final String XML_ENCLOSING_ELEMENT = "xml.enclosing.element";
-    public static final String TEXT_DELIMITER = "text.delimiter";
-    public static final String BINARY_DELIMITER = "binary.delimiter";
 
     // Defaults
     public static final String DEFAULT_CONTENT_TYPE = "application/octet-stream";

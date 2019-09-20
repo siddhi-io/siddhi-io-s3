@@ -31,19 +31,26 @@ import org.testng.Assert;
 import org.testng.annotations.Test;
 
 public class S3SinkTestCase {
-    private static final String BUCKET_NAME = "s3test-bucket";
+    private static final String BUCKET_NAME = "siddhi-io-s3-test-bucket";
 
     // Before running this test provide valid credentials and bucket details.
     // Due to not having a service to test against this, the test is commented out in the testng.xml
     @Test
     public void sinkTest1() throws InterruptedException {
-        String streams = "define stream FooStream(name string, age int);" +
-                "@sink(type='s3', bucket.name='" + BUCKET_NAME + "', object.path='foo/users/', " +
-                "credential.provider='com.amazonaws.auth.profile.ProfileCredentialsProvider', flush.size='3', " +
-                "    @map(type='json', enclosing.element='$.user', " +
-                "        @payload(\"\"\"{\"name\": \"{{name}}\", \"age\": {{age}}}\"\"\"))) " +
+        String streams = "" +
+                "define window BarWindow(name string, age int) lengthBatch(3) output all events;\";\n" +
+                "define stream FooStream(name string, age int);\n" +
+                "\n" +
+                "@sink(type='s3', bucket.name='" + BUCKET_NAME + "',object.path='test/users', " +
+                "credential.provider='com.amazonaws.auth.profile.ProfileCredentialsProvider', node.id='zeus', \n" +
+                "    @map(type='json', enclosing.element='$.user', \n" +
+                "        @payload(\"\"\"{\"name\": \"{{name}}\", \"age\": {{age}}}\"\"\"))) \n" +
                 "define stream BarStream(name string, age int);";
-        String query = "from FooStream\n" +
+        String query = "" +
+                "from FooStream\n" +
+                "insert into BarWindow;\n" +
+                "\n" +
+                "from BarWindow\n" +
                 "select name, age\n" +
                 "insert into BarStream;";
 

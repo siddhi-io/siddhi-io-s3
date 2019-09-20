@@ -29,20 +29,17 @@ import io.siddhi.query.api.definition.StreamDefinition;
  * Holds sink configurations read from annotations.
  */
 public class SinkConfig {
-    private String storageClass = StorageClass.Standard.toString();
     private String credentialProviderClass = null;
     private String awsAccessKey = null;
     private String awsSecretKey = null;
     private String bucketName = null;
-    private String awsRegion = Regions.DEFAULT_REGION.getName();
+    private String bucketAcl = null;
+    private String nodeId = null;
+    private String contentType = S3Constants.DEFAULT_CONTENT_TYPE;
     private String streamId;
     private String mapType;
-    private String contentType = S3Constants.DEFAULT_CONTENT_TYPE;
-    private String bucketAcl = "";
-    private String xmlEnclosingElement = "events";
-    private String textDelimiter = "\n";
-    private String binaryDelimiter = "\n";
-    private int flushSize = -1;
+    private StorageClass storageClass = StorageClass.Standard;
+    private Regions awsRegion = Regions.DEFAULT_REGION;
     private boolean versioningEnabled = false;
 
     public SinkConfig(OptionHolder optionHolder, StreamDefinition streamDefinition) {
@@ -58,36 +55,37 @@ public class SinkConfig {
                 case S3Constants.AWS_SECRET_KEY:
                     awsSecretKey = optionHolder.validateAndGetStaticValue(S3Constants.AWS_SECRET_KEY);
                     break;
-                case S3Constants.AWS_REGION:
-                    awsRegion = optionHolder.validateAndGetStaticValue(S3Constants.AWS_REGION);
-                    break;
                 case S3Constants.BUCKET_NAME:
                     bucketName = optionHolder.validateAndGetStaticValue(S3Constants.BUCKET_NAME);
-                    break;
-                case S3Constants.VERSIONING_ENABLED:
-                    versioningEnabled = Boolean.parseBoolean(
-                            optionHolder.validateAndGetStaticValue(S3Constants.VERSIONING_ENABLED));
-                    break;
-                case S3Constants.STORAGE_CLASS:
-                    storageClass = optionHolder.validateAndGetStaticValue(S3Constants.STORAGE_CLASS);
-                    break;
-                case S3Constants.FLUSH_SIZE:
-                    flushSize = Integer.parseInt(optionHolder.validateAndGetStaticValue(S3Constants.FLUSH_SIZE));
-                    break;
-                case S3Constants.CONTENT_TYPE:
-                    contentType = optionHolder.validateAndGetStaticValue(S3Constants.CONTENT_TYPE);
                     break;
                 case S3Constants.BUCKET_ACL:
                     bucketAcl = optionHolder.validateAndGetStaticValue(S3Constants.BUCKET_ACL);
                     break;
-                case S3Constants.XML_ENCLOSING_ELEMENT:
-                    xmlEnclosingElement = optionHolder.validateAndGetStaticValue(S3Constants.XML_ENCLOSING_ELEMENT);
+                case S3Constants.NODE_ID:
+                    nodeId = optionHolder.validateAndGetStaticValue(S3Constants.NODE_ID);
                     break;
-                case S3Constants.TEXT_DELIMITER:
-                    textDelimiter = optionHolder.validateAndGetStaticValue(S3Constants.TEXT_DELIMITER);
+                case S3Constants.CONTENT_TYPE:
+                    contentType = optionHolder.validateAndGetStaticValue(S3Constants.CONTENT_TYPE);
                     break;
-                case S3Constants.BINARY_DELIMITER:
-                    binaryDelimiter = optionHolder.validateAndGetStaticValue(S3Constants.BINARY_DELIMITER);
+                case S3Constants.STORAGE_CLASS:
+                    String storageClassName = optionHolder.validateAndGetStaticValue(S3Constants.STORAGE_CLASS);
+                    try {
+                        storageClass = StorageClass.fromValue(storageClassName);
+                    } catch (IllegalArgumentException e) {
+                        throw new SiddhiAppCreationException("Invalid valid defined for the field 'storage.class.'");
+                    }
+                    break;
+                case S3Constants.AWS_REGION:
+                    String regionName = optionHolder.validateAndGetStaticValue(S3Constants.AWS_REGION);
+                    try {
+                        awsRegion = Regions.fromName(regionName);
+                    } catch (IllegalArgumentException e) {
+                        throw new SiddhiAppCreationException("Invalid value defined for the field 'aws.region'.");
+                    }
+                    break;
+                case S3Constants.VERSIONING_ENABLED:
+                    versioningEnabled = Boolean.parseBoolean(
+                            optionHolder.validateAndGetStaticValue(S3Constants.VERSIONING_ENABLED));
                     break;
                 default:
                     // Ignore! Not a valid option.
@@ -95,23 +93,15 @@ public class SinkConfig {
         });
 
         if (bucketName == null || bucketName.isEmpty()) {
-            throw new SiddhiAppCreationException("Parameter '" + S3Constants.BUCKET_NAME + "' is required.");
+            throw new SiddhiAppCreationException("Parameter 'bucket.name' is required.");
         }
 
         if (!optionHolder.isOptionExists(S3Constants.OBJECT_PATH)) {
-            throw new SiddhiAppCreationException("Parameter '" + S3Constants.OBJECT_PATH + "' is required.");
-        }
-
-        if (flushSize <= 0) {
-            flushSize = 1;
+            throw new SiddhiAppCreationException("Parameter 'object.path' is required.");
         }
 
         // Get stream id and the map type from stream definition.
         streamId = streamDefinition.getId();
-    }
-
-    public String getStorageClass() {
-        return storageClass;
     }
 
     public String getCredentialProviderClass() {
@@ -130,8 +120,16 @@ public class SinkConfig {
         return bucketName;
     }
 
-    public String getAwsRegion() {
-        return awsRegion;
+    public String getBucketAcl() {
+        return bucketAcl;
+    }
+
+    public String getNodeId() {
+        return nodeId;
+    }
+
+    public String getContentType() {
+        return contentType;
     }
 
     public String getStreamId() {
@@ -146,28 +144,12 @@ public class SinkConfig {
         this.mapType = mapType;
     }
 
-    public String getContentType() {
-        return contentType;
+    public StorageClass getStorageClass() {
+        return storageClass;
     }
 
-    public String getBucketAcl() {
-        return bucketAcl;
-    }
-
-    public String getXmlEnclosingElement() {
-        return xmlEnclosingElement;
-    }
-
-    public String getTextDelimiter() {
-        return textDelimiter;
-    }
-
-    public String getBinaryDelimiter() {
-        return binaryDelimiter;
-    }
-
-    public int getFlushSize() {
-        return flushSize;
+    public Regions getAwsRegion() {
+        return awsRegion;
     }
 
     public boolean isVersioningEnabled() {
