@@ -2,7 +2,7 @@ site_name: Siddhi IO S3
 site_description: Siddhi IO S3 Extension
 repo_name: Siddhi IO S3
 repo_url: https://github.com/siddhi-io/siddhi-io-s3/
-edit_uri: https://github.com/siddhi-io/siddhi-store-rdbms/blob/master/
+edit_uri: https://github.com/siddhi-io/siddhi-io-s3/blob/master/
 copyright: Siddhi - Documentation
 theme:
   name: material
