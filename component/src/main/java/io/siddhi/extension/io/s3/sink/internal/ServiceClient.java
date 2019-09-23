@@ -123,12 +123,12 @@ public class ServiceClient {
 
         // Check if the bucket exists. If so skip the rest of the code.
         if (client.doesBucketExistV2(config.getBucketName())) {
-            logger.debug("Bucket '" + config.getBucketName() + "' is already exists." );
+            logger.debug("Bucket '" + config.getBucketName() + "' is already exists.");
             return;
         }
 
         // Create the bucket.
-        logger.debug("Bucket '" + config.getBucketName() + "' does not exist, hence creating." );
+        logger.debug("Bucket '" + config.getBucketName() + "' does not exist, hence creating.");
 
         CreateBucketRequest createBucketRequest = new CreateBucketRequest(
                 config.getBucketName(), config.getAwsRegion().getName());
