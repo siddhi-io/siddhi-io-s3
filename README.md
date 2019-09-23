@@ -16,7 +16,7 @@ Latest API Docs is <a target="_blank" href="https://siddhi-io.github.io/siddhi-i
 
 ## Features
 
-* <a target="_blank" href="https://siddhi-io.github.io/siddhi-io-s3/api/1.0.0/#http-sink">http</a> *(<a target="_blank" href="https://siddhi-io.github.io/siddhi/documentation/siddhi-5.0/#sink">(Sink)</a>)*<br><div style="padding-left: 1em;"><p>This extension publishes events to Amazon AWS S3 bucket as aggregated payloads. The payloads can be aggregated as JSON, XML, Text, Binary, Avro and CSV. The events can be aggregated using the 'flush.size' parameter which defines the number of events to be aggregated into a single object. </p></div>
+* <a target="_blank" href="https://siddhi-io.github.io/siddhi-io-s3/api/1.0.0/#s3-sink">s3</a> *(<a target="_blank" href="http://siddhi.io/en/v5.1/docs/query-guide/#sink">Sink</a>)*<br> <div style="padding-left: 1em;"><p><p style="word-wrap: break-word;margin: 0;">S3 sink publishes events as Amazon AWS S3 buckets.</p></p></div>
 
 ## Dependencies 
 
