@@ -149,6 +149,14 @@
             </plugin>
         </plugins>
     </build>
+
+    <scm>
+        <url>https://github.com/siddhi-io/siddhi-io-s3.git</url>
+        <developerConnection>scm:git:https://github.com/siddhi-io/siddhi-io-s3.git</developerConnection>
+        <connection>scm:git:https://github.com/siddhi-io/siddhi-io-s3.git</connection>
+        <tag>HEAD</tag>
+    </scm>
+
     <properties>
         <siddhi.version>5.1.2</siddhi.version>
         <siddhi.version.range>[5.1.0,6.0.0)</siddhi.version.range>
