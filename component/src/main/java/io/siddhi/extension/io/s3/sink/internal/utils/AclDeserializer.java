@@ -32,7 +32,7 @@ import java.util.List;
  * {@code ACLDeserializer} de-serializes bucket ACL from ACL definition and generate list of {@code Grant}s.
  * The accepted ACL definition is as follows.
  * <p>
- * Ex: 'canonical:<USER_UUID>:FullControl,group:LoDelivery:Read,email:john@doe.com:Write,email:jane@doe.com:Read'
+ * Ex: 'canonical:USER_UUID:FullControl,group:LoDelivery:Read,email:john@doe.com:Write,email:jane@doe.com:Read'
  */
 public class AclDeserializer {
 
