@@ -148,7 +148,11 @@ public class ServiceClient {
     }
 
     private AccessControlList buildBucketACL() {
-        List<Grant> grants = AclDeserializer.deserialize(config.getBucketAcl());
+        String bucketAcl = config.getBucketAcl();
+        if (bucketAcl == null || bucketAcl.isEmpty()) {
+            return null;
+        }
+        List<Grant> grants = AclDeserializer.deserialize(bucketAcl);
         if (grants.size() > 0) {
             AccessControlList acl = new AccessControlList();
             acl.grantAllPermissions(grants.toArray(new Grant[0]));
