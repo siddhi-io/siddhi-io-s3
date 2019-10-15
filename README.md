@@ -1,6 +1,13 @@
 ﻿Siddhi IO S3
 ======================================
 
+  [![Jenkins Build Status](https://wso2.org/jenkins/job/siddhi/job/siddhi-io-s3/badge/icon)](https://wso2.org/jenkins/job/siddhi/job/siddhi-io-s3/)
+  [![GitHub Release](https://img.shields.io/github/release/siddhi-io/siddhi-io-s3.svg)](https://github.com/siddhi-io/siddhi-io-s3/releases)
+  [![GitHub Release Date](https://img.shields.io/github/release-date/siddhi-io/siddhi-io-s3.svg)](https://github.com/siddhi-io/siddhi-io-s3/releases)
+  [![GitHub Open Issues](https://img.shields.io/github/issues-raw/siddhi-io/siddhi-io-s3.svg)](https://github.com/siddhi-io/siddhi-io-s3/issues)
+  [![GitHub Last Commit](https://img.shields.io/github/last-commit/siddhi-io/siddhi-io-s3.svg)](https://github.com/siddhi-io/siddhi-io-s3/commits/master)
+  [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
 The **siddhi-io-s3** is a <a target="_blank" href="https://siddhi.io/">Siddhi</a> extension which allows to publish events to Amazon AWS S3 buckets.
 
 
