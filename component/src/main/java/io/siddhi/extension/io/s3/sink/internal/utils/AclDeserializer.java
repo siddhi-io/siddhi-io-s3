@@ -18,11 +18,7 @@
 
 package io.siddhi.extension.io.s3.sink.internal.utils;
 
-import com.amazonaws.services.s3.model.CanonicalGrantee;
-import com.amazonaws.services.s3.model.EmailAddressGrantee;
-import com.amazonaws.services.s3.model.Grant;
-import com.amazonaws.services.s3.model.GroupGrantee;
-import com.amazonaws.services.s3.model.Permission;
+
 import org.apache.log4j.Logger;
 
 import java.util.ArrayList;
@@ -48,7 +44,7 @@ public class AclDeserializer {
         // To prevent initialization of the class.
     }
 
-    public static List<Grant> deserialize(String aclString) {
+   /* public static List<Grant> deserialize(String aclString) {
         List<Grant> grantList = new ArrayList<>();
         for (String grantString : aclString.split(ACL_GROUP_DELIMITER)) {
             String[] parts = grantString.split(ACL_GROUP_PARTS_DELIMITER);
@@ -105,5 +101,5 @@ public class AclDeserializer {
             }
         }
         return null;
-    }
+    }*/
 }

@@ -35,6 +35,7 @@ import io.siddhi.extension.io.s3.sink.internal.beans.SinkConfig;
 import io.siddhi.extension.io.s3.sink.internal.utils.AclDeserializer;
 import io.siddhi.extension.io.s3.sink.internal.utils.MapperTypes;
 import org.apache.log4j.Logger;
+import software.amazon.awssdk.services.s3.S3Client;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -52,7 +53,7 @@ public class ServiceClient {
     private static final String DEFAULT_CHARSET = "UTF-8";
 
     private SinkConfig config;
-    private AmazonS3 client;
+    private S3Client client;
 
     public ServiceClient(SinkConfig config) {
         this.config = config;
@@ -82,7 +83,7 @@ public class ServiceClient {
         client.putObject(request);
     }
 
-    private AmazonS3 buildClient() {
+    private S3Client buildClient() {
         AmazonS3ClientBuilder builder = AmazonS3ClientBuilder.standard()
                 .withRegion(config.getAwsRegion());
         AWSCredentialsProvider credentialProvider = getCredentialProvider();
@@ -132,10 +133,10 @@ public class ServiceClient {
 
         CreateBucketRequest createBucketRequest = new CreateBucketRequest(
                 config.getBucketName(), config.getAwsRegion().getName());
-        AccessControlList acl = buildBucketACL();
+        /*AccessControlList acl = buildBucketACL();
         if (acl != null) {
             createBucketRequest = createBucketRequest.withAccessControlList(acl);
-        }
+        }*/
         client.createBucket(createBucketRequest);
 
         // Enable versioning only if the config flag is set.
@@ -147,7 +148,7 @@ public class ServiceClient {
         }
     }
 
-    private AccessControlList buildBucketACL() {
+    /*private AccessControlList buildBucketACL() {
         String bucketAcl = config.getBucketAcl();
         if (bucketAcl == null || bucketAcl.isEmpty()) {
             return null;
@@ -159,7 +160,7 @@ public class ServiceClient {
             return acl;
         }
         return null;
-    }
+    }*/
 
     private String buildKey(String objectPath, int offset) {
         String extension = MapperTypes.forName(config.getMapType()).getExtension();
