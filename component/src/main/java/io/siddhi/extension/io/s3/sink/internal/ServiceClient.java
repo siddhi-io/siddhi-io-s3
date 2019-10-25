@@ -18,31 +18,35 @@
 
 package io.siddhi.extension.io.s3.sink.internal;
 
-import com.amazonaws.auth.AWSCredentialsProvider;
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
-import com.amazonaws.services.s3.model.AccessControlList;
-import com.amazonaws.services.s3.model.BucketVersioningConfiguration;
-import com.amazonaws.services.s3.model.CreateBucketRequest;
-import com.amazonaws.services.s3.model.Grant;
-import com.amazonaws.services.s3.model.ObjectMetadata;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.model.SetBucketVersioningConfigurationRequest;
 import io.siddhi.core.exception.SiddhiAppCreationException;
+import io.siddhi.core.exception.SiddhiAppRuntimeException;
 import io.siddhi.extension.io.s3.sink.internal.beans.SinkConfig;
-import io.siddhi.extension.io.s3.sink.internal.utils.AclDeserializer;
 import io.siddhi.extension.io.s3.sink.internal.utils.MapperTypes;
 import org.apache.log4j.Logger;
+import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.AwsSessionCredentials;
+import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.S3ClientBuilder;
+import software.amazon.awssdk.services.s3.model.Bucket;
+import software.amazon.awssdk.services.s3.model.BucketVersioningStatus;
+import software.amazon.awssdk.services.s3.model.CreateBucketConfiguration;
+import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
+import software.amazon.awssdk.services.s3.model.ListBucketsRequest;
+import software.amazon.awssdk.services.s3.model.PutBucketVersioningRequest;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.VersioningConfiguration;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.file.Paths;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -69,39 +73,46 @@ public class ServiceClient {
                 new ByteArrayInputStream(((ByteBuffer) payload).array()) :
                 new ByteArrayInputStream(((String) payload).getBytes(Charset.forName(DEFAULT_CHARSET)));
 
-        ObjectMetadata metadata = new ObjectMetadata();
-        metadata.setContentType(config.getContentType());
+        PutObjectRequest.Builder putObjectBuilder = PutObjectRequest.builder()
+                .bucket(config.getBucketName())
+                .key(buildKey(objectPath, offset))
+                .storageClass(config.getStorageClass());
         try {
-            metadata.setContentLength(inputStream.available());
+            putObjectBuilder.contentLength((long) inputStream.available());
         } catch (IOException e) {
             // Ignore setting the content length
         }
-
-        PutObjectRequest request = new PutObjectRequest(config.getBucketName(), buildKey(objectPath, offset),
-                inputStream, metadata);
-        request.setStorageClass(config.getStorageClass().toString());
-        client.putObject(request);
+        RequestBody requestBody = null;
+        try {
+            requestBody = RequestBody.fromInputStream(inputStream, inputStream.available());
+        } catch (IOException e) {
+            throw new SiddhiAppRuntimeException("Error while uploading the object", e);
+        }
+        client.putObject(putObjectBuilder.build(), requestBody);
     }
 
     private S3Client buildClient() {
-        AmazonS3ClientBuilder builder = AmazonS3ClientBuilder.standard()
-                .withRegion(config.getAwsRegion());
-        AWSCredentialsProvider credentialProvider = getCredentialProvider();
-        if (credentialProvider != null) {
-            builder.withCredentials(credentialProvider);
+        S3ClientBuilder builder = S3Client.builder()
+                .region(config.getAwsRegion());
+        AwsCredentialsProvider credentialsProvider = getCredentialProvider();
+        if (credentialsProvider != null) {
+            builder.credentialsProvider(credentialsProvider);
         }
         return builder.build();
     }
 
-    private AWSCredentialsProvider getCredentialProvider() {
+    private AwsCredentialsProvider getCredentialProvider() {
         if (config.getCredentialProviderClass() != null) {
             logger.debug("Authenticating user via the credential provider class.");
             try {
-                return (AWSCredentialsProvider) this.getClass()
+                /*return (AwsCredentialsProvider) this.getClass()
                         .getClassLoader()
                         .loadClass(config.getCredentialProviderClass())
-                        .newInstance();
-            } catch (InstantiationException | IllegalAccessException e) {
+                        .newInstance();*/
+                Class credentialProviderClass = Class.forName(config.getCredentialProviderClass());
+                return (AwsCredentialsProvider) credentialProviderClass.getDeclaredMethod("create")
+                        .invoke(credentialProviderClass);
+            } catch (IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
                 throw new SiddhiAppCreationException("Error while authenticating the user.", e);
             } catch (ClassNotFoundException e) {
                 throw new SiddhiAppCreationException("Unable to find the credential provider class " +
@@ -111,8 +122,11 @@ public class ServiceClient {
 
         if (config.getAwsAccessKey() != null && config.getAwsSecretKey() != null) {
             logger.debug("Authenticating the user via the access and secret keys.");
-            return new AWSStaticCredentialsProvider(
-                    new BasicAWSCredentials(config.getAwsAccessKey(), config.getAwsSecretKey()));
+            AwsSessionCredentials awsCreds = AwsSessionCredentials.create(
+                    config.getAwsAccessKey(),
+                    config.getAwsAccessKey(),
+                    "");
+            return StaticCredentialsProvider.create(awsCreds);
         }
         logger.debug("No credential provider class or keys are provided. Hence falling back to default credential " +
                 "provider chain.");
@@ -123,28 +137,31 @@ public class ServiceClient {
         // NOTE: The bucket.acl and versioning.enabled flags will only be effective if the bucket is not available.
 
         // Check if the bucket exists. If so skip the rest of the code.
-        if (client.doesBucketExistV2(config.getBucketName())) {
-            logger.debug("Bucket '" + config.getBucketName() + "' is already exists.");
+        List<Bucket> buckets = client.listBuckets(ListBucketsRequest.builder().build()).buckets();
+        int i = Collections.binarySearch(buckets, Bucket.builder().name(config.getBucketName()).build(),
+                Comparator.comparing(Bucket::name));
+        if (i >= 0) {
             return;
         }
 
         // Create the bucket.
         logger.debug("Bucket '" + config.getBucketName() + "' does not exist, hence creating.");
-
-        CreateBucketRequest createBucketRequest = new CreateBucketRequest(
-                config.getBucketName(), config.getAwsRegion().getName());
-        /*AccessControlList acl = buildBucketACL();
-        if (acl != null) {
-            createBucketRequest = createBucketRequest.withAccessControlList(acl);
-        }*/
+        CreateBucketRequest createBucketRequest = CreateBucketRequest
+                .builder()
+                .bucket(config.getBucketName())
+                .createBucketConfiguration(CreateBucketConfiguration.builder()
+                        .locationConstraint(config.getAwsRegion().id())
+                        .build())
+                .build();
         client.createBucket(createBucketRequest);
 
         // Enable versioning only if the config flag is set.
         if (config.isVersioningEnabled()) {
-            SetBucketVersioningConfigurationRequest bucketVersioningConfigurationRequest =
-                    new SetBucketVersioningConfigurationRequest(config.getBucketName(),
-                            new BucketVersioningConfiguration().withStatus(BucketVersioningConfiguration.ENABLED));
-            client.setBucketVersioningConfiguration(bucketVersioningConfigurationRequest);
+            client.putBucketVersioning(PutBucketVersioningRequest.builder()
+                    .bucket(config.getBucketName())
+                    .versioningConfiguration(VersioningConfiguration.builder().status(BucketVersioningStatus.ENABLED)
+                            .build())
+                    .build());
         }
     }
 
