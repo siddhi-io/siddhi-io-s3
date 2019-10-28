@@ -26,7 +26,6 @@ import io.siddhi.extension.io.s3.sink.internal.utils.MapperTypes;
 import org.apache.log4j.Logger;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.AwsSessionCredentials;
-import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -39,8 +38,8 @@ import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
 import software.amazon.awssdk.services.s3.model.GetBucketAclRequest;
 import software.amazon.awssdk.services.s3.model.GetBucketAclResponse;
 import software.amazon.awssdk.services.s3.model.Grant;
-import software.amazon.awssdk.services.s3.model.Grantee;
 import software.amazon.awssdk.services.s3.model.ListBucketsRequest;
+import software.amazon.awssdk.services.s3.model.Permission;
 import software.amazon.awssdk.services.s3.model.PutBucketAclRequest;
 import software.amazon.awssdk.services.s3.model.PutBucketVersioningRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
@@ -75,6 +74,7 @@ public class ServiceClient {
 
         // If the bucket is not available, create it.
         createBucketIfNotExist();
+
     }
 
     public void uploadObject(String objectPath, Object payload, int offset) {
@@ -130,7 +130,7 @@ public class ServiceClient {
             logger.debug("Authenticating the user via the access and secret keys.");
             AwsSessionCredentials awsCreds = AwsSessionCredentials.create(
                     config.getAwsAccessKey(),
-                    config.getAwsAccessKey(),
+                    config.getAwsSecretKey(),
                     "");
             return StaticCredentialsProvider.create(awsCreds);
         }
@@ -169,7 +169,6 @@ public class ServiceClient {
                             .build())
                     .build());
         }
-
         //add ACL permissions if "bucket.acl" flag is set
         String bucketAcl = config.getBucketAcl();
         if (bucketAcl == null || bucketAcl.isEmpty()) {
@@ -191,15 +190,12 @@ public class ServiceClient {
 
     private void addACLPermissions(S3Client s3, String bucketName, String ownerCanonicalId, List<Grant> grantList) {
 
-        /*Grantee ownerGrantee = Grantee.builder()
-                .id(getAclRes.grants().get(0).grantee().id())
-                .type(Type.CANONICAL_USER)
-                .build();*/
         Grant ownerGrant = Grant.builder()
                 .grantee(builder -> {
                     builder.id(ownerCanonicalId)
                             .type(Type.CANONICAL_USER);
                 })
+                .permission(Permission.FULL_CONTROL)
                 .build();
         grantList.add(ownerGrant);
         AccessControlPolicy acl = AccessControlPolicy.builder()
@@ -223,6 +219,6 @@ public class ServiceClient {
                 .bucket(bucketName)
                 .build();
         GetBucketAclResponse getAclRes = s3.getBucketAcl(bucketAclReq);
-        return getAclRes.grants().get(0).grantee().id();
+        return getAclRes.owner().id();
     }
 }

@@ -71,13 +71,14 @@ public class AclDeserializer {
                     break;
                 }
                 case GROUP_GRANTEE_TYPE:
-                    grantee = Grantee.builder().type(Type.GROUP).uri(parts[1]).build();
-                    /*if (grantee == null) {
+                    String uri = getGroupUri(parts[1]);
+                    if (uri == null) {
                         logger.warn("Invalid group grantee '" + parts[1] + "' specified in grant " + grantString +
                                 " in the bucket ACL. Possible values are AllUsers, AuthenticatedUsers, and " +
                                 "LogDelivery.");
                         continue;
-                    }*/
+                    }
+                    grantee = Grantee.builder().type(Type.GROUP).uri(uri).build();
                     break;
                 case EMAIL_GRANTEE_TYPE:
                     grantee = Grantee.builder().type(Type.AMAZON_CUSTOMER_BY_EMAIL).emailAddress(parts[1]).build();
@@ -93,49 +94,6 @@ public class AclDeserializer {
         return grantList;
     }
 
-    /*List<Grant> grantList = new ArrayList<>();
-    for (String grantString : aclString.split(ACL_GROUP_DELIMITER)) {
-        String[] parts = grantString.split(ACL_GROUP_PARTS_DELIMITER);
-        if (parts.length != 3) {
-            continue;
-        }
-        Permission permission = getPermission(parts[2]);
-        if (permission == null) {
-            logger.warn("Invalid bucket permission '" + parts[2] + "' specified in grant " + grantString +
-                    " in the bucket ACL. Possible values are FULL_CONTROL, READ, WRITE, READ_ACP, and WRITE_ACP.");
-            continue;
-        }
-
-        switch (parts[0].toLowerCase()) {
-            case CANONICAL_GRANTEE_TYPE:
-                grantList.add(new Grant(new CanonicalGrantee(parts[1]), getPermission(parts[2])));
-                break;
-            case GROUP_GRANTEE_TYPE:
-                GroupGrantee groupGrantee = getGroupGrantee(parts[1]);
-                if (groupGrantee == null) {
-                    logger.warn("Invalid group grantee '" + parts[1] + "' specified in grant " + grantString +
-                            " in the bucket ACL. Possible values are AllUsers, AuthenticatedUsers, and " +
-                            "LogDelivery.");
-                    continue;
-                }
-                grantList.add(new Grant(getGroupGrantee(parts[1]), getPermission(parts[2])));
-                break;
-            case EMAIL_GRANTEE_TYPE:
-                grantList.add(new Grant(new EmailAddressGrantee(parts[1]), getPermission(parts[2])));
-                break;
-            default:
-                // Not a valid grantee, hence ignoring.
-                logger.warn("Invalid grantee '" + parts[0] + "' specified in grant " + grantString +
-                        " in the bucket ACL. Possible values are canonical, group, and email.");
-                break;
-        }
-    }
-    return grantList;
-}
-
-p
-
-*/
     private static Permission getPermission(String permissionName) {
         for (Permission permission : Permission.values()) {
             if (permission.toString().equalsIgnoreCase(permissionName)) {
@@ -145,12 +103,18 @@ p
         return null;
     }
 
-    /*private static Grantee getGroupGrantee(String groupString) {
-        for (Grantee groupGrantee : GroupGrantee.values()) {
-            if (groupGrantee.toString().equalsIgnoreCase(groupString)) {
-                return groupGrantee;
+    private static String getGroupUri(String groupString) {
+        switch (groupString.toLowerCase()) {
+            case "logdelivery": {
+                return "http://acs.amazonaws.com/groups/s3/LogDelivery";
+            }
+            case "authenticatedusers": {
+                return "http://acs.amazonaws.com/groups/global/AuthenticatedUsers";
+            }
+            case "allusers": {
+                return "http://acs.amazonaws.com/groups/global/AllUsers";
             }
         }
         return null;
-    }*/
+    }
 }
