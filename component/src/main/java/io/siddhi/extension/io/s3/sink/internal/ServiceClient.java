@@ -21,21 +21,31 @@ package io.siddhi.extension.io.s3.sink.internal;
 import io.siddhi.core.exception.SiddhiAppCreationException;
 import io.siddhi.core.exception.SiddhiAppRuntimeException;
 import io.siddhi.extension.io.s3.sink.internal.beans.SinkConfig;
+import io.siddhi.extension.io.s3.sink.internal.utils.AclDeserializer;
 import io.siddhi.extension.io.s3.sink.internal.utils.MapperTypes;
 import org.apache.log4j.Logger;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.AwsSessionCredentials;
+import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.S3ClientBuilder;
+import software.amazon.awssdk.services.s3.model.AccessControlPolicy;
 import software.amazon.awssdk.services.s3.model.Bucket;
 import software.amazon.awssdk.services.s3.model.BucketVersioningStatus;
 import software.amazon.awssdk.services.s3.model.CreateBucketConfiguration;
 import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
+import software.amazon.awssdk.services.s3.model.GetBucketAclRequest;
+import software.amazon.awssdk.services.s3.model.GetBucketAclResponse;
+import software.amazon.awssdk.services.s3.model.Grant;
+import software.amazon.awssdk.services.s3.model.Grantee;
 import software.amazon.awssdk.services.s3.model.ListBucketsRequest;
+import software.amazon.awssdk.services.s3.model.PutBucketAclRequest;
 import software.amazon.awssdk.services.s3.model.PutBucketVersioningRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.S3Exception;
+import software.amazon.awssdk.services.s3.model.Type;
 import software.amazon.awssdk.services.s3.model.VersioningConfiguration;
 
 import java.io.ByteArrayInputStream;
@@ -105,10 +115,6 @@ public class ServiceClient {
         if (config.getCredentialProviderClass() != null) {
             logger.debug("Authenticating user via the credential provider class.");
             try {
-                /*return (AwsCredentialsProvider) this.getClass()
-                        .getClassLoader()
-                        .loadClass(config.getCredentialProviderClass())
-                        .newInstance();*/
                 Class credentialProviderClass = Class.forName(config.getCredentialProviderClass());
                 return (AwsCredentialsProvider) credentialProviderClass.getDeclaredMethod("create")
                         .invoke(credentialProviderClass);
@@ -163,21 +169,17 @@ public class ServiceClient {
                             .build())
                     .build());
         }
-    }
 
-    /*private AccessControlList buildBucketACL() {
+        //add ACL permissions if "bucket.acl" flag is set
         String bucketAcl = config.getBucketAcl();
         if (bucketAcl == null || bucketAcl.isEmpty()) {
-            return null;
+            return;
         }
         List<Grant> grants = AclDeserializer.deserialize(bucketAcl);
-        if (grants.size() > 0) {
-            AccessControlList acl = new AccessControlList();
-            acl.grantAllPermissions(grants.toArray(new Grant[0]));
-            return acl;
-        }
-        return null;
-    }*/
+        addACLPermissions(client, config.getBucketName(), getOwnerCanonicalId(client, config.getBucketName()), grants);
+
+    }
+
 
     private String buildKey(String objectPath, int offset) {
         String extension = MapperTypes.forName(config.getMapType()).getExtension();
@@ -185,5 +187,42 @@ public class ServiceClient {
                 String.format("%s-%s-%d.%s", config.getStreamId(), config.getNodeId(), offset, extension) :
                 String.format("%s-%d.%s", config.getStreamId(), offset, extension);
         return Paths.get(objectPath, key).toString();
+    }
+
+    private void addACLPermissions(S3Client s3, String bucketName, String ownerCanonicalId, List<Grant> grantList) {
+
+        /*Grantee ownerGrantee = Grantee.builder()
+                .id(getAclRes.grants().get(0).grantee().id())
+                .type(Type.CANONICAL_USER)
+                .build();*/
+        Grant ownerGrant = Grant.builder()
+                .grantee(builder -> {
+                    builder.id(ownerCanonicalId)
+                            .type(Type.CANONICAL_USER);
+                })
+                .build();
+        grantList.add(ownerGrant);
+        AccessControlPolicy acl = AccessControlPolicy.builder()
+                .owner(builder -> builder.id(ownerCanonicalId))
+                .grants(grantList)
+                .build();
+        //put the new acl
+        PutBucketAclRequest putAclReq = PutBucketAclRequest.builder()
+                .bucket(bucketName)
+                .accessControlPolicy(acl)
+                .build();
+        try {
+            s3.putBucketAcl(putAclReq);
+        } catch (S3Exception e) {
+            logger.error("Error while adding ACL permission to the bucket ", e);
+        }
+    }
+
+    private String getOwnerCanonicalId(S3Client s3, String bucketName) {
+        GetBucketAclRequest bucketAclReq = GetBucketAclRequest.builder()
+                .bucket(bucketName)
+                .build();
+        GetBucketAclResponse getAclRes = s3.getBucketAcl(bucketAclReq);
+        return getAclRes.grants().get(0).grantee().id();
     }
 }
