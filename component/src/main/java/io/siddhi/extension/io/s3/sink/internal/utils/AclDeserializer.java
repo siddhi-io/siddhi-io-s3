@@ -20,9 +20,6 @@ package io.siddhi.extension.io.s3.sink.internal.utils;
 
 
 import org.apache.log4j.Logger;
-import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.GetBucketAclRequest;
-import software.amazon.awssdk.services.s3.model.GetBucketAclResponse;
 import software.amazon.awssdk.services.s3.model.Grant;
 import software.amazon.awssdk.services.s3.model.Grantee;
 import software.amazon.awssdk.services.s3.model.Permission;

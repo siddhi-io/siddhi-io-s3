@@ -23,6 +23,7 @@ import io.siddhi.core.util.transport.OptionHolder;
 import io.siddhi.extension.io.s3.sink.internal.utils.S3Constants;
 import io.siddhi.query.api.definition.StreamDefinition;
 import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.dynamodb.DynamoDbClient;
 import software.amazon.awssdk.services.s3.model.StorageClass;
 
 /**
@@ -77,11 +78,10 @@ public class SinkConfig {
                     break;
                 case S3Constants.AWS_REGION:
                     String regionName = optionHolder.validateAndGetStaticValue(S3Constants.AWS_REGION);
-                    try {
                         awsRegion = Region.of(regionName);
-                    } catch (IllegalArgumentException e) {
-                        throw new SiddhiAppCreationException("Invalid value defined for the field 'aws.region'.");
-                    }
+                        if(!DynamoDbClient.serviceMetadata().regions().contains(awsRegion)) {
+                            throw new SiddhiAppCreationException("Invalid value defined for the field 'aws.region'.");
+                        }
                     break;
                 case S3Constants.VERSIONING_ENABLED:
                     versioningEnabled = Boolean.parseBoolean(

@@ -86,13 +86,15 @@ public class ServiceClient {
         PutObjectRequest.Builder putObjectBuilder = PutObjectRequest.builder()
                 .bucket(config.getBucketName())
                 .key(buildKey(objectPath, offset))
+                .contentType(config.getContentType())
                 .storageClass(config.getStorageClass());
+
         try {
             putObjectBuilder.contentLength((long) inputStream.available());
         } catch (IOException e) {
             // Ignore setting the content length
         }
-        RequestBody requestBody = null;
+        RequestBody requestBody;
         try {
             requestBody = RequestBody.fromInputStream(inputStream, inputStream.available());
         } catch (IOException e) {

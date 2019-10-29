@@ -130,7 +130,7 @@ public class S3SinkTestCase {
                 "\n" +
                 "@sink(type='s3', bucket.name='" + BUCKET_NAME + "',object.path='test/users', " +
                 "aws.secret.key='wr5YRTx0znXR6NSTJpSOtFvY2JjX6QodBzDNrMmG', aws.access.key='AKIAYUR5MD4IPLS4SPUB'" +
-                ", node.id='zeus', \n" +
+                ", node.id='zeus',aws.region='sfdsfds', \n" +
                 "    @map(type='json', enclosing.element='$.user', \n" +
                 "        @payload(\"\"\"{\"name\": \"{{name}}\", \"age\": {{age}}}\"\"\"))) \n" +
                 "define stream BarStream(name string, age int);";
@@ -168,7 +168,7 @@ public class S3SinkTestCase {
     private S3Client getClient() {
         return S3Client.builder()
                 .credentialsProvider(ProfileCredentialsProvider.create())
-                .region(Region.US_WEST_2)
+                .region(Region.of("trsdf"))
                 .build();
     }
 }
