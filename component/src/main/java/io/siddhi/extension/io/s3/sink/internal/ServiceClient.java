@@ -27,7 +27,11 @@ import org.apache.log4j.Logger;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.AwsSessionCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.http.SdkHttpClient;
+import software.amazon.awssdk.http.SdkHttpConfigurationOption;
+import software.amazon.awssdk.http.apache.ApacheHttpClient;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.S3ClientBuilder;
 import software.amazon.awssdk.services.s3.model.AccessControlPolicy;
@@ -46,6 +50,7 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 import software.amazon.awssdk.services.s3.model.Type;
 import software.amazon.awssdk.services.s3.model.VersioningConfiguration;
+import software.amazon.awssdk.utils.AttributeMap;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -104,13 +109,16 @@ public class ServiceClient {
     }
 
     private S3Client buildClient() {
+//        SdkHttpClient httpClient = ApacheHttpClient.builder().build();
+        SdkHttpClient sdkHttpClient = ApacheHttpClient.builder().buildWithDefaults(AttributeMap.builder()
+                .put(SdkHttpConfigurationOption.TRUST_ALL_CERTIFICATES, Boolean.TRUE).build());
         S3ClientBuilder builder = S3Client.builder()
                 .region(config.getAwsRegion());
         AwsCredentialsProvider credentialsProvider = getCredentialProvider();
         if (credentialsProvider != null) {
             builder.credentialsProvider(credentialsProvider);
         }
-        return builder.build();
+        return builder.httpClient(sdkHttpClient).build();
     }
 
     private AwsCredentialsProvider getCredentialProvider() {
@@ -145,7 +153,16 @@ public class ServiceClient {
         // NOTE: The bucket.acl and versioning.enabled flags will only be effective if the bucket is not available.
 
         // Check if the bucket exists. If so skip the rest of the code.
-        List<Bucket> buckets = client.listBuckets(ListBucketsRequest.builder().build()).buckets();
+        List<Bucket> buckets;
+        try {
+            buckets = client.listBuckets(ListBucketsRequest.builder().build()).buckets();
+        } catch (SdkClientException e) {
+            throw new SiddhiAppCreationException("Invalid region id provided, given region id: '" +
+                    config.getAwsRegion() + "'.", e);
+        } catch (S3Exception e) {
+            throw new SiddhiAppCreationException("Invalid credential provided, check your user credential class or" +
+                    " access-key and secret-key.", e);
+        }
         int i = Collections.binarySearch(buckets, Bucket.builder().name(config.getBucketName()).build(),
                 Comparator.comparing(Bucket::name));
         if (i >= 0) {

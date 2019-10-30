@@ -23,7 +23,7 @@
 <suite name="Siddhi-IO-S3-Test-Suite">
     <test name="Siddhi-io-s3-tests" enabled="true" preserve-order="true" parallel="false">
         <classes>
-            <!--<class name="io.siddhi.extension.io.s3.sink.S3SinkTestCase"/>-->
+            <class name="io.siddhi.extension.io.s3.sink.S3SinkTestCase"/>
         </classes>
     </test>
 </suite>

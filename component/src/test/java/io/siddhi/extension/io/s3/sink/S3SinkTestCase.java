@@ -73,10 +73,11 @@ public class S3SinkTestCase {
 
         ListObjectsV2Request request = ListObjectsV2Request.builder().bucket(BUCKET_NAME).build();
         ListObjectsV2Response listObjectsV2Response = getClient().listObjectsV2(request);
-        Assert.assertEquals(listObjectsV2Response.contents().size(),2);
+        Assert.assertEquals(listObjectsV2Response.contents().size(), 2);
         siddhiAppRuntime.shutdown();
 
     }
+
     @Test
     public void sinkTestCaseWithACLPermission() throws InterruptedException {
         String streams = "" +
@@ -118,19 +119,19 @@ public class S3SinkTestCase {
 
         ListObjectsV2Request request = ListObjectsV2Request.builder().bucket(BUCKET_NAME).build();
         ListObjectsV2Response listObjectsV2Response = getClient().listObjectsV2(request);
-        Assert.assertEquals(listObjectsV2Response.contents().size(),2);
+        Assert.assertEquals(listObjectsV2Response.contents().size(), 2);
         siddhiAppRuntime.shutdown();
     }
 
     @Test
-    public void SinkTestCaseWithAccessKeyAndSecretKey() throws InterruptedException {
+    public void sinkTestCaseWithAccessKeyAndSecretKey() throws InterruptedException {
         String streams = "" +
                 "define window BarWindow(name string, age int) lengthBatch(3) output all events;\";\n" +
                 "define stream FooStream(name string, age int);\n" +
                 "\n" +
                 "@sink(type='s3', bucket.name='" + BUCKET_NAME + "',object.path='test/users', " +
                 "aws.secret.key='wr5YRTx0znXR6NSTJpSOtFvY2JjX6QodBzDNrMmG', aws.access.key='AKIAYUR5MD4IPLS4SPUB'" +
-                ", node.id='zeus',aws.region='sfdsfds', \n" +
+                ", node.id='zeus',aws.region='us-west-2', \n" +
                 "    @map(type='json', enclosing.element='$.user', \n" +
                 "        @payload(\"\"\"{\"name\": \"{{name}}\", \"age\": {{age}}}\"\"\"))) \n" +
                 "define stream BarStream(name string, age int);";
@@ -160,7 +161,7 @@ public class S3SinkTestCase {
 
         ListObjectsV2Request request = ListObjectsV2Request.builder().bucket(BUCKET_NAME).build();
         ListObjectsV2Response listObjectsV2Response = getClient().listObjectsV2(request);
-        Assert.assertEquals(listObjectsV2Response.contents().size(),2);
+        Assert.assertEquals(listObjectsV2Response.contents().size(), 2);
         siddhiAppRuntime.shutdown();
 
     }
@@ -168,7 +169,7 @@ public class S3SinkTestCase {
     private S3Client getClient() {
         return S3Client.builder()
                 .credentialsProvider(ProfileCredentialsProvider.create())
-                .region(Region.of("trsdf"))
+                .region(Region.of("us-west-2"))
                 .build();
     }
 }
