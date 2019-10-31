@@ -30,7 +30,6 @@ import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.http.SdkHttpClient;
-import software.amazon.awssdk.http.SdkHttpConfigurationOption;
 import software.amazon.awssdk.http.apache.ApacheHttpClient;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.S3ClientBuilder;
@@ -50,7 +49,6 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 import software.amazon.awssdk.services.s3.model.Type;
 import software.amazon.awssdk.services.s3.model.VersioningConfiguration;
-import software.amazon.awssdk.utils.AttributeMap;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -79,7 +77,6 @@ public class ServiceClient {
 
         // If the bucket is not available, create it.
         createBucketIfNotExist();
-
     }
 
     public void uploadObject(String objectPath, Object payload, int offset) {
@@ -93,7 +90,6 @@ public class ServiceClient {
                 .key(buildKey(objectPath, offset))
                 .contentType(config.getContentType())
                 .storageClass(config.getStorageClass());
-
         try {
             putObjectBuilder.contentLength((long) inputStream.available());
         } catch (IOException e) {
@@ -109,16 +105,14 @@ public class ServiceClient {
     }
 
     private S3Client buildClient() {
-//        SdkHttpClient httpClient = ApacheHttpClient.builder().build();
-        SdkHttpClient sdkHttpClient = ApacheHttpClient.builder().buildWithDefaults(AttributeMap.builder()
-                .put(SdkHttpConfigurationOption.TRUST_ALL_CERTIFICATES, Boolean.TRUE).build());
+        SdkHttpClient httpClient = ApacheHttpClient.builder().build();
         S3ClientBuilder builder = S3Client.builder()
                 .region(config.getAwsRegion());
         AwsCredentialsProvider credentialsProvider = getCredentialProvider();
         if (credentialsProvider != null) {
             builder.credentialsProvider(credentialsProvider);
         }
-        return builder.httpClient(sdkHttpClient).build();
+        return builder.httpClient(httpClient).build();
     }
 
     private AwsCredentialsProvider getCredentialProvider() {

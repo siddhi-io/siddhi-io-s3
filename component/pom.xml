@@ -69,21 +69,14 @@
             <artifactId>s3</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>apache-client</artifactId>
         </dependency>
 
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
         </dependency>
-
-
-        <dependency>
-            <groupId>software.amazon.awssdk</groupId>
-            <artifactId>apache-client</artifactId>
-        </dependency>
-
 
     </dependencies>
 
@@ -167,29 +160,18 @@
                         <Private-Package>
                             software.amazon.awssdk.*,
                             org.reactivestreams.*,
-                            org.slf4j.*,
-                            <!--software.amazon.awssdk.core.*,
-                            software.amazon.awssdk.services.*,
-                            software.amazon.awssdk.regions.*,-->
                             org.apache.http.*,
                             org.joda.time.*,
                         </Private-Package>
                         <Export-Package>
                             io.siddhi.extension.io.s3.*,
-<!--                            software.amazon.awssdk.*,-->
                         </Export-Package>
                         <Import-Package>
                             software.amazon.awssdk.*;version="${aws.sdk.version.range}",
                             software.amazon.awssdk.http.*;version="${aws.sdk.version.range}",
-<!--                            org.reactivestreams.*;version="${test.version}",-->
-<!--                            org.slf4j.*;version="${test.version2}",-->
-<!--                            software.amazon.awssdk.core.*;version="${aws.sdk.version.range}",
-                            software.amazon.awssdk.services.*;version="${aws.sdk.version.range}",
-                            software.amazon.awssdk.regions.*;version="${aws.sdk.version.range}",-->
                             io.siddhi.core.*;version="${siddhi.version.range}",
                             io.siddhi.annotation.*;version="${siddhi.version.range}",
                             io.siddhi.query.*;version="${siddhi.version.range}",
-                            *;resolution:=optional
                         </Import-Package>
                         <DynamicImport-Package>*</DynamicImport-Package>
                         <Include-Resource>
