@@ -135,8 +135,8 @@ import java.util.concurrent.atomic.AtomicInteger;
         examples = {
                 @Example(
                         syntax = "@sink(type='s3', bucket.name='user-stream-bucket',object.path='bar/users', " +
-                                "credential.provider='com.amazonaws.auth.profile.ProfileCredentialsProvider', " +
-                                "flush.size='3',\n" +
+                                "credential.provider='software.amazon.awssdk.auth.credentials" +
+                                ".ProfileCredentialsProvider', flush.size='3',\n" +
                                 "    @map(type='json', enclosing.element='$.user', \n" +
                                 "        @payload(\"\"\"{\"name\": \"{{name}}\", \"age\": {{age}}}\"\"\"))) \n" +
                                 "define stream UserStream(name string, age int);  ",

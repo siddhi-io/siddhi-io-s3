@@ -65,14 +65,19 @@
 
         <!-- Amazon AWS SDK -->
         <dependency>
-            <groupId>com.amazonaws</groupId>
-            <artifactId>aws-java-sdk-s3</artifactId>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>s3</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>apache-client</artifactId>
         </dependency>
 
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
         </dependency>
+
     </dependencies>
 
     <profiles>
@@ -153,16 +158,17 @@
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Bundle-Name>${project.artifactId}</Bundle-Name>
                         <Private-Package>
-                            com.amazonaws.*,
+                            software.amazon.awssdk.*,
+                            org.reactivestreams.*,
                             org.apache.http.*,
                             org.joda.time.*,
                         </Private-Package>
                         <Export-Package>
-                            io.siddhi.extension.io.s3.*
+                            io.siddhi.extension.io.s3.*,
                         </Export-Package>
                         <Import-Package>
-                            com.amazonaws.*;version="${aws.sdk.version.range}",
-                            com.amazonaws.http.*;version="${aws.sdk.version.range}",
+                            software.amazon.awssdk.*;version="${aws.sdk.version.range}",
+                            software.amazon.awssdk.http.*;version="${aws.sdk.version.range}",
                             io.siddhi.core.*;version="${siddhi.version.range}",
                             io.siddhi.annotation.*;version="${siddhi.version.range}",
                             io.siddhi.query.*;version="${siddhi.version.range}",
@@ -174,10 +180,6 @@
                         </Include-Resource>
                     </instructions>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.jacoco</groupId>
-                <artifactId>jacoco-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>

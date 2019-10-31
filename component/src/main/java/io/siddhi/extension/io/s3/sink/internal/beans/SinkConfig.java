@@ -18,12 +18,12 @@
 
 package io.siddhi.extension.io.s3.sink.internal.beans;
 
-import com.amazonaws.regions.Regions;
-import com.amazonaws.services.s3.model.StorageClass;
 import io.siddhi.core.exception.SiddhiAppCreationException;
 import io.siddhi.core.util.transport.OptionHolder;
 import io.siddhi.extension.io.s3.sink.internal.utils.S3Constants;
 import io.siddhi.query.api.definition.StreamDefinition;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.s3.model.StorageClass;
 
 /**
  * Holds sink configurations read from annotations.
@@ -38,8 +38,8 @@ public class SinkConfig {
     private String contentType = S3Constants.DEFAULT_CONTENT_TYPE;
     private String streamId;
     private String mapType;
-    private StorageClass storageClass = StorageClass.Standard;
-    private Regions awsRegion = Regions.DEFAULT_REGION;
+    private StorageClass storageClass = StorageClass.STANDARD;
+    private Region awsRegion = Region.US_WEST_2;
     private boolean versioningEnabled = false;
 
     public SinkConfig(OptionHolder optionHolder, StreamDefinition streamDefinition) {
@@ -77,11 +77,7 @@ public class SinkConfig {
                     break;
                 case S3Constants.AWS_REGION:
                     String regionName = optionHolder.validateAndGetStaticValue(S3Constants.AWS_REGION);
-                    try {
-                        awsRegion = Regions.fromName(regionName);
-                    } catch (IllegalArgumentException e) {
-                        throw new SiddhiAppCreationException("Invalid value defined for the field 'aws.region'.");
-                    }
+                    awsRegion = Region.of(regionName);
                     break;
                 case S3Constants.VERSIONING_ENABLED:
                     versioningEnabled = Boolean.parseBoolean(
@@ -148,7 +144,7 @@ public class SinkConfig {
         return storageClass;
     }
 
-    public Regions getAwsRegion() {
+    public Region getAwsRegion() {
         return awsRegion;
     }
 
