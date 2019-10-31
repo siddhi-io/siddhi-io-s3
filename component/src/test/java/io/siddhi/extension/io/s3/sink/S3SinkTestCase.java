@@ -87,7 +87,7 @@ public class S3SinkTestCase {
                 "@sink(type='s3', bucket.name='" + BUCKET_NAME + "-1',object.path='test/users', " +
                 "credential.provider.class='software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider'" +
                 ", node.id='zeus', " +
-                "bucket.acl='canonical:4d68d894c7683b1efeff1e5b674b3d026af4e508dfcd7205baae575e46f2b3f5:WRITE," +
+                "bucket.acl='canonical:xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx:WRITE," + //give a valid canonical id
                 "group:LogDelivery:READ'," +
                 " \n" +
                 "    @map(type='json', enclosing.element='$.user', \n" +
@@ -130,7 +130,7 @@ public class S3SinkTestCase {
                 "define stream FooStream(name string, age int);\n" +
                 "\n" +
                 "@sink(type='s3', bucket.name='" + BUCKET_NAME + "',object.path='test/users', " +
-                "aws.secret.key='wr5YRTx0znXR6NSTJpSOtFvY2JjX6QodBzDNrMmG', aws.access.key='AKIAYUR5MD4IPLS4SPUB'" +
+                "aws.secret.key='xxxxxxxx', aws.access.key='xxxxxxxxxx'" + // give a valid access-key and a secret-key
                 ", node.id='zeus',aws.region='us-west-2', \n" +
                 "    @map(type='json', enclosing.element='$.user', \n" +
                 "        @payload(\"\"\"{\"name\": \"{{name}}\", \"age\": {{age}}}\"\"\"))) \n" +
