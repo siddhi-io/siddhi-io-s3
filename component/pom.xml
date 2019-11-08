@@ -21,7 +21,7 @@
     <parent>
         <groupId>io.siddhi.extension.io.s3</groupId>
         <artifactId>siddhi-io-s3-parent</artifactId>
-        <version>1.0.2-SNAPSHOT</version>
+        <version>1.0.2</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <artifactId>siddhi-io-s3</artifactId>
