@@ -1,6 +1,13 @@
 ﻿Siddhi IO S3
 ======================================
 
+  [![Jenkins Build Status](https://wso2.org/jenkins/job/siddhi/job/siddhi-io-s3/badge/icon)](https://wso2.org/jenkins/job/siddhi/job/siddhi-io-s3/)
+  [![GitHub Release](https://img.shields.io/github/release/siddhi-io/siddhi-io-s3.svg)](https://github.com/siddhi-io/siddhi-io-s3/releases)
+  [![GitHub Release Date](https://img.shields.io/github/release-date/siddhi-io/siddhi-io-s3.svg)](https://github.com/siddhi-io/siddhi-io-s3/releases)
+  [![GitHub Open Issues](https://img.shields.io/github/issues-raw/siddhi-io/siddhi-io-s3.svg)](https://github.com/siddhi-io/siddhi-io-s3/issues)
+  [![GitHub Last Commit](https://img.shields.io/github/last-commit/siddhi-io/siddhi-io-s3.svg)](https://github.com/siddhi-io/siddhi-io-s3/commits/master)
+  [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
+
 The **siddhi-io-s3** is a <a target="_blank" href="https://siddhi.io/">Siddhi</a> extension which allows to publish events to Amazon AWS S3 buckets.
 
 
@@ -12,11 +19,11 @@ For information on <a target="_blank" href="https://siddhi.io/">Siddhi</a> and i
 
 ## Latest API Docs 
 
-Latest API Docs is <a target="_blank" href="https://siddhi-io.github.io/siddhi-io-s3/api/1.0.1">1.0.1</a>.
+Latest API Docs is <a target="_blank" href="https://siddhi-io.github.io/siddhi-io-s3/api/1.0.2">1.0.2</a>.
 
 ## Features
 
-* <a target="_blank" href="https://siddhi-io.github.io/siddhi-io-s3/api/1.0.1/#s3-sink">s3</a> *(<a target="_blank" href="http://siddhi.io/en/v5.1/docs/query-guide/#sink">Sink</a>)*<br> <div style="padding-left: 1em;"><p><p style="word-wrap: break-word;margin: 0;">S3 sink publishes events as Amazon AWS S3 buckets.</p></p></div>
+* <a target="_blank" href="https://siddhi-io.github.io/siddhi-io-s3/api/1.0.2/#s3-sink">s3</a> *(<a target="_blank" href="http://siddhi.io/en/v5.1/docs/query-guide/#sink">Sink</a>)*<br> <div style="padding-left: 1em;"><p><p style="word-wrap: break-word;margin: 0;">S3 sink publishes events as Amazon AWS S3 buckets.</p></p></div>
 
 ## Dependencies 
 
