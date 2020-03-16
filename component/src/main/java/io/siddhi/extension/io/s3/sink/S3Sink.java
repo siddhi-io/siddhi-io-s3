@@ -235,11 +235,10 @@ public class S3Sink extends Sink<S3Sink.SinkState> {
     }
 
     /**
-     * Cleanup the sink and destroy the publisher object.
+     * Cleanup the sink.
      */
     @Override
     public void destroy() {
-        publisher = null;
     }
 
     /**
