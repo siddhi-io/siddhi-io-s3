@@ -19,11 +19,11 @@ For information on <a target="_blank" href="https://siddhi.io/">Siddhi</a> and i
 
 ## Latest API Docs 
 
-Latest API Docs is <a target="_blank" href="https://siddhi-io.github.io/siddhi-io-s3/api/1.0.2">1.0.2</a>.
+Latest API Docs is <a target="_blank" href="https://siddhi-io.github.io/siddhi-io-s3/api/1.0.3">1.0.3</a>.
 
 ## Features
 
-* <a target="_blank" href="https://siddhi-io.github.io/siddhi-io-s3/api/1.0.2/#s3-sink">s3</a> *(<a target="_blank" href="http://siddhi.io/en/v5.1/docs/query-guide/#sink">Sink</a>)*<br> <div style="padding-left: 1em;"><p><p style="word-wrap: break-word;margin: 0;">S3 sink publishes events as Amazon AWS S3 buckets.</p></p></div>
+* <a target="_blank" href="https://siddhi-io.github.io/siddhi-io-s3/api/1.0.3/#s3-sink">s3</a> *(<a target="_blank" href="http://siddhi.io/en/v5.1/docs/query-guide/#sink">Sink</a>)*<br> <div style="padding-left: 1em;"><p><p style="word-wrap: break-word;margin: 0;">S3 sink publishes events as Amazon AWS S3 buckets.</p></p></div>
 
 ## Dependencies 
 
