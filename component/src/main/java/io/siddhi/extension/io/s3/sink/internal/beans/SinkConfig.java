@@ -21,6 +21,8 @@ package io.siddhi.extension.io.s3.sink.internal.beans;
 import io.siddhi.core.exception.SiddhiAppCreationException;
 import io.siddhi.core.util.transport.OptionHolder;
 import io.siddhi.extension.io.s3.sink.internal.utils.S3Constants;
+import io.siddhi.extension.common.beans.BucketConfig;
+import io.siddhi.extension.common.beans.ClientConfig;
 import io.siddhi.query.api.definition.StreamDefinition;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.model.StorageClass;
@@ -29,37 +31,35 @@ import software.amazon.awssdk.services.s3.model.StorageClass;
  * Holds sink configurations read from annotations.
  */
 public class SinkConfig {
-    private String credentialProviderClass = null;
-    private String awsAccessKey = null;
-    private String awsSecretKey = null;
-    private String bucketName = null;
-    private String bucketAcl = null;
     private String nodeId = null;
     private String contentType = S3Constants.DEFAULT_CONTENT_TYPE;
     private String streamId;
     private String mapType;
     private StorageClass storageClass = StorageClass.STANDARD;
-    private Region awsRegion = Region.US_WEST_2;
-    private boolean versioningEnabled = false;
+
+    private ClientConfig clientConfig;
+    private BucketConfig bucketConfig;
 
     public SinkConfig(OptionHolder optionHolder, StreamDefinition streamDefinition) {
+        clientConfig = new ClientConfig();
+        bucketConfig = new BucketConfig();
         optionHolder.getStaticOptionsKeys().forEach(key -> {
             switch (key) {
                 case S3Constants.CREDENTIAL_PROVIDER_CLASS:
-                    credentialProviderClass =
-                            optionHolder.validateAndGetStaticValue(S3Constants.CREDENTIAL_PROVIDER_CLASS);
+                    clientConfig.setCredentialProviderClass(
+                            optionHolder.validateAndGetStaticValue(S3Constants.CREDENTIAL_PROVIDER_CLASS));
                     break;
                 case S3Constants.AWS_ACCESS_KEY:
-                    awsAccessKey = optionHolder.validateAndGetStaticValue(S3Constants.AWS_ACCESS_KEY);
+                    clientConfig.setAwsAccessKey(optionHolder.validateAndGetStaticValue(S3Constants.AWS_ACCESS_KEY));
                     break;
                 case S3Constants.AWS_SECRET_KEY:
-                    awsSecretKey = optionHolder.validateAndGetStaticValue(S3Constants.AWS_SECRET_KEY);
+                    clientConfig.setAwsSecretKey(optionHolder.validateAndGetStaticValue(S3Constants.AWS_SECRET_KEY));
                     break;
                 case S3Constants.BUCKET_NAME:
-                    bucketName = optionHolder.validateAndGetStaticValue(S3Constants.BUCKET_NAME);
+                    bucketConfig.setBucketName(optionHolder.validateAndGetStaticValue(S3Constants.BUCKET_NAME));
                     break;
                 case S3Constants.BUCKET_ACL:
-                    bucketAcl = optionHolder.validateAndGetStaticValue(S3Constants.BUCKET_ACL);
+                    bucketConfig.setBucketAcl(optionHolder.validateAndGetStaticValue(S3Constants.BUCKET_ACL));
                     break;
                 case S3Constants.NODE_ID:
                     nodeId = optionHolder.validateAndGetStaticValue(S3Constants.NODE_ID);
@@ -72,23 +72,23 @@ public class SinkConfig {
                     try {
                         storageClass = StorageClass.fromValue(storageClassName);
                     } catch (IllegalArgumentException e) {
-                        throw new SiddhiAppCreationException("Invalid valid defined for the field 'storage.class.'");
+                        throw new SiddhiAppCreationException("Invalid value defined for the field 'storage.class.'");
                     }
                     break;
                 case S3Constants.AWS_REGION:
                     String regionName = optionHolder.validateAndGetStaticValue(S3Constants.AWS_REGION);
-                    awsRegion = Region.of(regionName);
+                    clientConfig.setAwsRegion(Region.of(regionName));
                     break;
                 case S3Constants.VERSIONING_ENABLED:
-                    versioningEnabled = Boolean.parseBoolean(
-                            optionHolder.validateAndGetStaticValue(S3Constants.VERSIONING_ENABLED));
+                    bucketConfig.setVersioningEnabled(Boolean.parseBoolean(
+                            optionHolder.validateAndGetStaticValue(S3Constants.VERSIONING_ENABLED)));
                     break;
                 default:
                     // Ignore! Not a valid option.
             }
         });
 
-        if (bucketName == null || bucketName.isEmpty()) {
+        if (bucketConfig.getBucketName() == null || bucketConfig.getBucketName().isEmpty()) {
             throw new SiddhiAppCreationException("Parameter 'bucket.name' is required.");
         }
 
@@ -98,26 +98,6 @@ public class SinkConfig {
 
         // Get stream id and the map type from stream definition.
         streamId = streamDefinition.getId();
-    }
-
-    public String getCredentialProviderClass() {
-        return credentialProviderClass;
-    }
-
-    public String getAwsAccessKey() {
-        return awsAccessKey;
-    }
-
-    public String getAwsSecretKey() {
-        return awsSecretKey;
-    }
-
-    public String getBucketName() {
-        return bucketName;
-    }
-
-    public String getBucketAcl() {
-        return bucketAcl;
     }
 
     public String getNodeId() {
@@ -144,11 +124,11 @@ public class SinkConfig {
         return storageClass;
     }
 
-    public Region getAwsRegion() {
-        return awsRegion;
+    public ClientConfig getClientConfig() {
+        return clientConfig;
     }
 
-    public boolean isVersioningEnabled() {
-        return versioningEnabled;
+    public BucketConfig getBucketConfig() {
+        return bucketConfig;
     }
 }

@@ -35,6 +35,12 @@ public class S3Constants {
     public static final String VERSIONING_ENABLED = "versioning.enabled";
     public static final String OBJECT_PATH = "object.path";
 
+    // Function parameters
+    public static final String FILE_PATH = "file.path";
+    public static final String KEY = "key";
+    public static final String FROM_BUCKET_NAME = "from.bucket.name";
+    public static final String FROM_KEY = "from.key";
+
     // Defaults
     public static final String DEFAULT_CONTENT_TYPE = "application/octet-stream";
 

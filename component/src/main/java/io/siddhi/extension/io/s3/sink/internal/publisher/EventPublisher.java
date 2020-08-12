@@ -21,9 +21,9 @@ package io.siddhi.extension.io.s3.sink.internal.publisher;
 import io.siddhi.core.util.transport.DynamicOptions;
 import io.siddhi.core.util.transport.OptionHolder;
 import io.siddhi.extension.io.s3.sink.S3Sink;
-import io.siddhi.extension.io.s3.sink.internal.ServiceClient;
 import io.siddhi.extension.io.s3.sink.internal.beans.SinkConfig;
 import io.siddhi.extension.io.s3.sink.internal.utils.S3Constants;
+import io.siddhi.extension.common.S3ServiceClient;
 import org.apache.log4j.Logger;
 
 import java.util.concurrent.TimeUnit;
@@ -40,7 +40,7 @@ public class EventPublisher {
     private final SinkConfig config;
     private final S3Sink.SinkState state;
 
-    private ServiceClient client;
+    private S3ServiceClient client;
     private OptionHolder optionHolder;
     private EventPublisherThreadPoolExecutor executor;
 
@@ -51,20 +51,19 @@ public class EventPublisher {
     }
 
     public void init() {
-        this.client = new ServiceClient(config);
-
-        this.executor = new EventPublisherThreadPoolExecutor(CORE_POOL_SIZE, MAX_POOL_SIZE, KEEP_ALIVE_TIME_MS,
+        client = new S3ServiceClient(config.getClientConfig());
+        executor = new EventPublisherThreadPoolExecutor(CORE_POOL_SIZE, MAX_POOL_SIZE, KEEP_ALIVE_TIME_MS,
                 TimeUnit.MILLISECONDS, state.getTaskQueue());
     }
 
     public void start() {
         logger.debug("Starting all core threads.");
-        this.executor.prestartAllCoreThreads();
+        executor.prestartAllCoreThreads();
     }
 
     public void publish(Object payload, DynamicOptions dynamicOptions, S3Sink.SinkState state) {
         String objectPath = optionHolder.validateAndGetOption(S3Constants.OBJECT_PATH).getValue(dynamicOptions);
-        state.getTaskQueue().add(new PublisherTask(client, objectPath, payload,
+        state.getTaskQueue().add(new PublisherTask(client, config, objectPath, payload,
                 state.getEventIncrementer().incrementAndGet()));
         logger.debug("The event is being added to the queue. Will be published to S3 shortly.");
     }

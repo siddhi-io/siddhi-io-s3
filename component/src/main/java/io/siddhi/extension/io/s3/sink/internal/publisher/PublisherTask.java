@@ -18,8 +18,12 @@
 
 package io.siddhi.extension.io.s3.sink.internal.publisher;
 
-import io.siddhi.extension.io.s3.sink.internal.ServiceClient;
+import io.siddhi.extension.io.s3.sink.internal.beans.SinkConfig;
+import io.siddhi.extension.common.S3ServiceClient;
+import io.siddhi.extension.io.s3.sink.internal.utils.MapperTypes;
 import org.apache.log4j.Logger;
+
+import java.nio.file.Paths;
 
 /**
  * {@code PublisherTask} is responsible for each event object to be uploaded to a S3 bucket.
@@ -27,14 +31,16 @@ import org.apache.log4j.Logger;
 public class PublisherTask implements Runnable {
     private static final Logger logger = Logger.getLogger(PublisherTask.class);
 
-    private final ServiceClient client;
+    private final S3ServiceClient client;
     private final int offset;
 
+    private SinkConfig sinkConfig;
     private Object payload;
     private String objectPath;
 
-    public PublisherTask(ServiceClient client, String objectPath, Object payload, int offset) {
+    public PublisherTask(S3ServiceClient client, SinkConfig sinkConfig, String objectPath, Object payload, int offset) {
         this.client = client;
+        this.sinkConfig = sinkConfig;
         this.objectPath = objectPath;
         this.payload = payload;
         this.offset = offset;
@@ -42,6 +48,15 @@ public class PublisherTask implements Runnable {
 
     @Override
     public void run() {
-        client.uploadObject(objectPath, payload, offset);
+        client.uploadObject(sinkConfig.getBucketConfig().getBucketName(), buildkey(), payload,
+                sinkConfig.getContentType(), sinkConfig.getStorageClass());
+    }
+
+    private String buildkey() {
+        String extension = MapperTypes.forName(sinkConfig.getMapType()).getExtension();
+        String key = (sinkConfig.getNodeId() != null && !sinkConfig.getNodeId().isEmpty()) ?
+                String.format("%s-%s-%d.%s", sinkConfig.getStreamId(), sinkConfig.getNodeId(), offset, extension) :
+                String.format("%s-%d.%s", sinkConfig.getStreamId(), offset, extension);
+        return Paths.get(objectPath, key).toString();
     }
 }
