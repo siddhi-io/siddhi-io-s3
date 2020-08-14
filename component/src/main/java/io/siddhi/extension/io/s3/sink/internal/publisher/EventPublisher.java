@@ -22,7 +22,7 @@ import io.siddhi.core.util.transport.DynamicOptions;
 import io.siddhi.core.util.transport.OptionHolder;
 import io.siddhi.extension.io.s3.sink.S3Sink;
 import io.siddhi.extension.io.s3.sink.internal.beans.SinkConfig;
-import io.siddhi.extension.io.s3.sink.internal.utils.S3Constants;
+import io.siddhi.extension.common.utils.S3Constants;
 import io.siddhi.extension.common.S3ServiceClient;
 import org.apache.log4j.Logger;
 
@@ -32,11 +32,8 @@ import java.util.concurrent.TimeUnit;
  * Handles queueing events for publish to S3.
  */
 public class EventPublisher {
-
     private static final Logger logger = Logger.getLogger(EventPublisher.class);
-    private static final int CORE_POOL_SIZE = 10;
-    private static final int MAX_POOL_SIZE = 20;
-    private static final int KEEP_ALIVE_TIME_MS = 5000;
+
     private final SinkConfig config;
     private final S3Sink.SinkState state;
 
@@ -52,8 +49,8 @@ public class EventPublisher {
 
     public void init() {
         client = new S3ServiceClient(config.getClientConfig());
-        executor = new EventPublisherThreadPoolExecutor(CORE_POOL_SIZE, MAX_POOL_SIZE, KEEP_ALIVE_TIME_MS,
-                TimeUnit.MILLISECONDS, state.getTaskQueue());
+        executor = new EventPublisherThreadPoolExecutor(S3Constants.CORE_POOL_SIZE, S3Constants.MAX_POOL_SIZE,
+                S3Constants.KEEP_ALIVE_TIME_MS, TimeUnit.MILLISECONDS, state.getTaskQueue());
     }
 
     public void start() {

@@ -19,7 +19,7 @@
 package io.siddhi.extension.common.beans;
 
 import io.siddhi.core.exception.SiddhiAppCreationException;
-import io.siddhi.extension.io.s3.sink.internal.utils.S3Constants;
+import io.siddhi.extension.common.utils.S3Constants;
 
 import java.util.Map;
 
@@ -31,23 +31,23 @@ public class BucketConfig {
     public BucketConfig() {
     }
 
-    public static BucketConfig fromMap(Map<String, String> map ) {
+    public static BucketConfig fromMap(Map<String, Object> map) {
         BucketConfig config = new BucketConfig();
-        for (Map.Entry<String, String> entry : map.entrySet()) {
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
             switch (entry.getKey()) {
                 case S3Constants.BUCKET_NAME:
-                    if (entry.getValue() != null && !entry.getValue().isEmpty()) {
-                        config.setBucketName(entry.getValue());
+                    if (isValidString(entry.getValue())) {
+                        config.setBucketName((String) entry.getValue());
                     }
                     break;
                 case S3Constants.BUCKET_ACL:
-                    if (entry.getValue() != null && !entry.getValue().isEmpty()) {
-                        config.setBucketAcl(entry.getValue());
+                    if (isValidString(entry.getValue())) {
+                        config.setBucketAcl((String) entry.getValue());
                     }
                     break;
                 case S3Constants.VERSIONING_ENABLED:
-                    if (entry.getValue() != null && !entry.getValue().isEmpty()) {
-                        config.setVersioningEnabled(Boolean.parseBoolean(entry.getValue()));
+                    if (isValidString(entry.getValue())) {
+                        config.setVersioningEnabled(Boolean.parseBoolean((String) entry.getValue()));
                     }
                     break;
             }
@@ -83,5 +83,9 @@ public class BucketConfig {
         if (bucketName == null || bucketName.isEmpty()) {
             throw new SiddhiAppCreationException("Parameter '" + S3Constants.BUCKET_NAME + "' is required.");
         }
+    }
+
+    private static boolean isValidString(Object obj) {
+        return obj != null && !((String) obj).isEmpty();
     }
 }

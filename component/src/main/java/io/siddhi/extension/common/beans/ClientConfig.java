@@ -19,7 +19,7 @@
 package io.siddhi.extension.common.beans;
 
 import io.siddhi.core.exception.SiddhiAppCreationException;
-import io.siddhi.extension.io.s3.sink.internal.utils.S3Constants;
+import io.siddhi.extension.common.utils.S3Constants;
 import software.amazon.awssdk.regions.Region;
 
 import java.util.Map;
@@ -34,33 +34,37 @@ public class ClientConfig {
     public ClientConfig() {
     }
 
-    public static ClientConfig fromMap(Map<String, String> map) {
+    public static ClientConfig fromMap(Map<String, Object> map) {
         ClientConfig config = new ClientConfig();
-        for (Map.Entry<String, String> entry : map.entrySet()) {
+        for (Map.Entry<String, Object> entry : map.entrySet()) {
             switch (entry.getKey()) {
                 case S3Constants.CREDENTIAL_PROVIDER_CLASS:
-                    if (entry.getValue() != null && !entry.getValue().isEmpty()) {
-                        config.setCredentialProviderClass(entry.getValue());
+                    if (isValidString(entry.getValue())) {
+                        config.setCredentialProviderClass((String) entry.getValue());
                     }
                     break;
                 case S3Constants.AWS_ACCESS_KEY:
-                    if (entry.getValue() != null && !entry.getValue().isEmpty()) {
-                        config.setAwsAccessKey(entry.getValue());
+                    if (isValidString(entry.getValue())) {
+                        config.setAwsAccessKey((String) entry.getValue());
                     }
                     break;
                 case S3Constants.AWS_SECRET_KEY:
-                    if (entry.getValue() != null && !entry.getValue().isEmpty()) {
-                        config.setAwsSecretKey(entry.getValue());
+                    if (isValidString(entry.getValue())) {
+                        config.setAwsSecretKey((String) entry.getValue());
                     }
                     break;
                 case S3Constants.AWS_REGION:
-                    if (entry.getValue() != null && !entry.getValue().isEmpty()) {
-                        config.setAwsRegion(Region.of(entry.getValue()));
+                    if (isValidString(entry.getValue())) {
+                        config.setAwsRegion(Region.of((String) entry.getValue()));
                     }
                     break;
             }
         }
         return config;
+    }
+
+    private static boolean isValidString(Object obj) {
+        return obj != null && !((String) obj).isEmpty();
     }
 
     public String getCredentialProviderClass() {

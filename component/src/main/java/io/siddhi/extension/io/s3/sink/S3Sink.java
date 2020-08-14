@@ -34,7 +34,7 @@ import io.siddhi.core.util.transport.DynamicOptions;
 import io.siddhi.core.util.transport.OptionHolder;
 import io.siddhi.extension.io.s3.sink.internal.beans.SinkConfig;
 import io.siddhi.extension.io.s3.sink.internal.publisher.EventPublisher;
-import io.siddhi.extension.io.s3.sink.internal.utils.S3Constants;
+import io.siddhi.extension.common.utils.S3Constants;
 import io.siddhi.query.api.definition.StreamDefinition;
 import org.apache.log4j.Logger;
 

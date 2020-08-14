@@ -30,20 +30,23 @@ import io.siddhi.core.query.processor.ProcessingMode;
 import io.siddhi.core.query.processor.stream.function.StreamFunctionProcessor;
 import io.siddhi.core.util.config.ConfigReader;
 import io.siddhi.core.util.snapshot.state.StateFactory;
+import io.siddhi.extension.common.S3ServiceClient;
 import io.siddhi.extension.common.beans.BucketConfig;
 import io.siddhi.extension.common.beans.ClientConfig;
-import io.siddhi.extension.common.S3ServiceClient;
-import io.siddhi.extension.io.s3.sink.internal.utils.S3Constants;
+import io.siddhi.extension.common.utils.S3Constants;
+import io.siddhi.extension.io.s3.sink.internal.publisher.EventPublisherThreadPoolExecutor;
 import io.siddhi.query.api.definition.AbstractDefinition;
 import io.siddhi.query.api.definition.Attribute;
 import org.apache.log4j.Logger;
-import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.model.StorageClass;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.TimeUnit;
 
 @Extension(
         name = "copy",
@@ -74,6 +77,14 @@ import java.util.Map;
                         description = "Key of the destination object",
                         type = DataType.STRING,
                         dynamic = true
+                ),
+                @Parameter(
+                        name = "async",
+                        description = "Toggle async mode",
+                        type = DataType.BOOL,
+                        dynamic = true,
+                        optional = true,
+                        defaultValue = "false"
                 ),
                 @Parameter(
                         name = "credential.provider.class",
@@ -131,29 +142,32 @@ import java.util.Map;
                         parameterNames = {"from.bucket.name", "from.key", "bucket.name", "key"}
                 ),
                 @ParameterOverload(
-                        parameterNames = {"from.bucket.name", "from.key", "bucket.name", "key",
+                        parameterNames = {"from.bucket.name", "from.key", "bucket.name", "key", "async"}
+                ),
+                @ParameterOverload(
+                        parameterNames = {"from.bucket.name", "from.key", "bucket.name", "key", "async",
                                 "credential.provider.class",}
                 ),
                 @ParameterOverload(
-                        parameterNames = {"from.bucket.name", "from.key", "bucket.name", "key",
+                        parameterNames = {"from.bucket.name", "from.key", "bucket.name", "key", "async",
                                 "credential.provider.class", "aws.region"}
                 ),
                 @ParameterOverload(
-                        parameterNames = {"from.bucket.name", "from.key", "bucket.name", "key",
+                        parameterNames = {"from.bucket.name", "from.key", "bucket.name", "key", "async",
                                 "credential.provider.class", "aws.region", "storage.class"}
                 ),
                 @ParameterOverload(
-                        parameterNames = {"from.bucket.name", "from.key", "bucket.name", "key",
+                        parameterNames = {"from.bucket.name", "from.key", "bucket.name", "key", "async",
                                 "credential.provider.class", "aws.region", "storage.class", "aws.access.key",
                                 "aws.secret.key"}
                 ),
                 @ParameterOverload(
-                        parameterNames = {"from.bucket.name", "from.key", "bucket.name", "key",
+                        parameterNames = {"from.bucket.name", "from.key", "bucket.name", "key", "async",
                                 "credential.provider.class", "aws.region", "storage.class", "aws.access.key",
                                 "aws.secret.key", "versioning.enabled"}
                 ),
                 @ParameterOverload(
-                        parameterNames = {"from.bucket.name", "from.key", "bucket.name", "key",
+                        parameterNames = {"from.bucket.name", "from.key", "bucket.name", "key", "async",
                                 "credential.provider.class", "aws.region", "storage.class", "aws.access.key",
                                 "aws.secret.key", "versioning.enabled", "bucket.acl"}
                 )
@@ -161,26 +175,29 @@ import java.util.Map;
         examples = {
                 @Example(
                         syntax = "from FooStream#s3:copy('stock-source-bucket', 'stocks.txt', " +
-                                "'stock-backup-bucket', '/backup/stocks.txt', )",
+                                "'stock-backup-bucket', '/backup/stocks.txt')",
                         description = "Copy object from one bucket to another."
                 )
         }
 )
 public class S3CopyFunctionProcessor extends StreamFunctionProcessor {
     private static final Logger logger = Logger.getLogger(S3CopyFunctionProcessor.class);
-    private S3ServiceClient client;
+
+    private BlockingQueue<Runnable> taskQueue;
+    private EventPublisherThreadPoolExecutor executor;
 
     @Override
     protected Object[] process(Object[] data) {
-        if (data.length < 4 || data.length == 8 || data.length > 11) {
+        if (data.length < 4 || data.length == 9 || data.length > 12) {
             throw new SiddhiAppCreationException("Invalid number of parameters.");
         }
 
-        String[] parameterList = new String[] {
+        String[] parameterList = new String[]{
                 S3Constants.FROM_BUCKET_NAME,
                 S3Constants.FROM_KEY,
                 S3Constants.BUCKET_NAME,
                 S3Constants.KEY,
+                S3Constants.ASYNC,
                 S3Constants.CREDENTIAL_PROVIDER_CLASS,
                 S3Constants.AWS_REGION,
                 S3Constants.STORAGE_CLASS,
@@ -189,19 +206,20 @@ public class S3CopyFunctionProcessor extends StreamFunctionProcessor {
                 S3Constants.VERSIONING_ENABLED,
                 S3Constants.BUCKET_ACL
         };
-        Map<String, String> parameterMap = new HashMap<>();
+        Map<String, Object> parameterMap = new HashMap<>();
         for (int i = 0; i < data.length; i++) {
-            parameterMap.put(parameterList[i], (String) data[i]);
+            parameterMap.put(parameterList[i], data[i]);
         }
 
         ClientConfig clientConfig = ClientConfig.fromMap(parameterMap);
         BucketConfig bucketConfig = BucketConfig.fromMap(parameterMap);
 
-        String fromBucketName = parameterMap.get(S3Constants.FROM_BUCKET_NAME);
-        String fromKey = parameterMap.get(S3Constants.FROM_KEY);
-        String key = parameterMap.get(S3Constants.KEY);
+        String fromBucketName = (String) parameterMap.get(S3Constants.FROM_BUCKET_NAME);
+        String fromKey = (String) parameterMap.get(S3Constants.FROM_KEY);
+        String key = (String) parameterMap.get(S3Constants.KEY);
         StorageClass storageClass = parameterMap.containsKey(S3Constants.STORAGE_CLASS) ?
-                StorageClass.fromValue(parameterMap.get(S3Constants.STORAGE_CLASS)) : StorageClass.STANDARD;
+                StorageClass.fromValue((String) parameterMap.get(S3Constants.STORAGE_CLASS)) : StorageClass.STANDARD;
+        boolean async = (boolean) parameterMap.getOrDefault(S3Constants.ASYNC, false);
 
         // Validate parameters
         if (fromBucketName == null || fromBucketName.isEmpty()) {
@@ -216,11 +234,12 @@ public class S3CopyFunctionProcessor extends StreamFunctionProcessor {
         bucketConfig.validate();
 
         // Copy object
-        client = new S3ServiceClient(clientConfig);
-        client.ensureBucketAvailability(bucketConfig);
-        client.copyObject(fromBucketName, fromKey, bucketConfig.getBucketName(), key, storageClass);
-        logger.debug("Object '" + fromKey + "' in bucket '" + fromBucketName + "' is copied to '" + key +
-                "' in bucket '" + bucketConfig.getBucketName() + "'.");
+        CopyTask task = new CopyTask(clientConfig, bucketConfig, fromBucketName, fromKey, key, storageClass);
+        if (async) {
+            taskQueue.add(task);
+        } else {
+            task.run();
+        }
         return new Object[0];
     }
 
@@ -233,6 +252,9 @@ public class S3CopyFunctionProcessor extends StreamFunctionProcessor {
     protected StateFactory init(AbstractDefinition inputDefinition, ExpressionExecutor[] attributeExpressionExecutors,
                                 ConfigReader configReader, boolean outputExpectsExpiredEvents,
                                 SiddhiQueryContext siddhiQueryContext) {
+        taskQueue = new LinkedBlockingQueue<>();
+        executor = new EventPublisherThreadPoolExecutor(S3Constants.CORE_POOL_SIZE, S3Constants.MAX_POOL_SIZE,
+                S3Constants.KEEP_ALIVE_TIME_MS, TimeUnit.MILLISECONDS, taskQueue);
         return null;
     }
 
@@ -243,16 +265,49 @@ public class S3CopyFunctionProcessor extends StreamFunctionProcessor {
 
     @Override
     public void start() {
-
+        if (executor != null) {
+            executor.prestartAllCoreThreads();
+        }
     }
 
     @Override
     public void stop() {
-
+        if (executor != null) {
+            executor.shutdown();
+        }
     }
 
     @Override
     public ProcessingMode getProcessingMode() {
         return ProcessingMode.BATCH;
+    }
+
+    class CopyTask implements Runnable {
+        private final ClientConfig clientConfig;
+        private BucketConfig bucketConfig;
+        private String fromBucketName;
+        private String fromKey;
+        private String key;
+        private StorageClass storageClass;
+
+        public CopyTask(ClientConfig clientConfig, BucketConfig bucketConfig, String fromBucketName, String fromKey,
+                        String key, StorageClass storageClass) {
+            this.clientConfig = clientConfig;
+            this.bucketConfig = bucketConfig;
+            this.fromBucketName = fromBucketName;
+            this.fromKey = fromKey;
+            this.key = key;
+            this.storageClass = storageClass;
+        }
+
+        @Override
+        public void run() {
+            S3ServiceClient client = new S3ServiceClient(clientConfig);
+            client.ensureBucketAvailability(bucketConfig);
+            client.copyObject(fromBucketName, fromKey, bucketConfig.getBucketName(), key, storageClass);
+
+            logger.debug("Object '" + fromKey + "' in bucket '" + fromBucketName + "' is copied to '" + key +
+                    "' in bucket '" + bucketConfig.getBucketName() + "'.");
+        }
     }
 }

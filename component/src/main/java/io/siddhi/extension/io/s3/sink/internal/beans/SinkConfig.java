@@ -20,7 +20,7 @@ package io.siddhi.extension.io.s3.sink.internal.beans;
 
 import io.siddhi.core.exception.SiddhiAppCreationException;
 import io.siddhi.core.util.transport.OptionHolder;
-import io.siddhi.extension.io.s3.sink.internal.utils.S3Constants;
+import io.siddhi.extension.common.utils.S3Constants;
 import io.siddhi.extension.common.beans.BucketConfig;
 import io.siddhi.extension.common.beans.ClientConfig;
 import io.siddhi.query.api.definition.StreamDefinition;
