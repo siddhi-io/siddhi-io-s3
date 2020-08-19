@@ -46,6 +46,9 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * {@code S3DeleteFunctionProcessor} handles deletes objects from S3 buckets.
+ */
 @Extension(
         name = "delete",
         namespace = "s3",
@@ -218,7 +221,7 @@ public class S3DeleteFunctionProcessor extends StreamFunctionProcessor {
         return ProcessingMode.BATCH;
     }
 
-    class DeleteTask implements  Runnable {
+    class DeleteTask implements Runnable {
         private ClientConfig clientConfig;
         private String bucketName;
         private String key;

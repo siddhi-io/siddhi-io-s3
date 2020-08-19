@@ -23,6 +23,9 @@ import io.siddhi.extension.common.utils.S3Constants;
 
 import java.util.Map;
 
+/**
+ * Holds bucket configurations read from annotations
+ */
 public class BucketConfig {
     private String bucketName = null;
     private String bucketAcl = null;
@@ -50,9 +53,16 @@ public class BucketConfig {
                         config.setVersioningEnabled(Boolean.parseBoolean((String) entry.getValue()));
                     }
                     break;
+                default:
+                    // Invalid config. Ignoring!
+                    break;
             }
         }
         return config;
+    }
+
+    private static boolean isValidString(Object obj) {
+        return obj != null && !((String) obj).isEmpty();
     }
 
     public String getBucketName() {
@@ -83,9 +93,5 @@ public class BucketConfig {
         if (bucketName == null || bucketName.isEmpty()) {
             throw new SiddhiAppCreationException("Parameter '" + S3Constants.BUCKET_NAME + "' is required.");
         }
-    }
-
-    private static boolean isValidString(Object obj) {
-        return obj != null && !((String) obj).isEmpty();
     }
 }

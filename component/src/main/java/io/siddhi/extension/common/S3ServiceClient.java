@@ -131,8 +131,7 @@ public class S3ServiceClient {
         addACLPermissions(client, bucketConfig.getBucketName(),
                 getOwnerCanonicalId(client, bucketConfig.getBucketName()), grants);
     }
-
-    // upload file
+    
     public void uploadObject(String bucketName, String key, Path path, StorageClass storageClass) {
         this.uploadObject(bucketName, key, path, null, storageClass);
     }
@@ -172,7 +171,8 @@ public class S3ServiceClient {
                            StorageClass storageClass) {
         String encodedUrl;
         try {
-            encodedUrl = URLEncoder.encode(Paths.get(srcBucketName, srcKey).toString(), StandardCharsets.UTF_8.toString());
+            encodedUrl = URLEncoder.encode(Paths.get(srcBucketName, srcKey).toString(),
+                    StandardCharsets.UTF_8.toString());
         } catch (UnsupportedEncodingException e) {
             throw new SiddhiAppRuntimeException("Cannot encode the source URL", e);
         }

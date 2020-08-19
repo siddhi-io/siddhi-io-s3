@@ -24,6 +24,9 @@ import software.amazon.awssdk.regions.Region;
 
 import java.util.Map;
 
+/**
+ * Holds S3 client configurations read from annotations
+ */
 public class ClientConfig {
 
     private String credentialProviderClass = null;
@@ -57,6 +60,9 @@ public class ClientConfig {
                     if (isValidString(entry.getValue())) {
                         config.setAwsRegion(Region.of((String) entry.getValue()));
                     }
+                    break;
+                default:
+                    // Invalid config. Ignoring!
                     break;
             }
         }
@@ -100,7 +106,8 @@ public class ClientConfig {
     }
 
     public void validate() {
-        boolean hasCredentialProviderClass = this.credentialProviderClass != null && !this.credentialProviderClass.isEmpty();
+        boolean hasCredentialProviderClass = this.credentialProviderClass != null &&
+                !this.credentialProviderClass.isEmpty();
         boolean hasAccessKey = this.awsAccessKey != null && !this.awsAccessKey.isEmpty();
         boolean hasSecretKey = this.awsSecretKey != null && !this.awsSecretKey.isEmpty();
 

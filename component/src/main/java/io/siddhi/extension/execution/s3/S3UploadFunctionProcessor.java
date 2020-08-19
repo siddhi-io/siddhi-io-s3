@@ -33,8 +33,8 @@ import io.siddhi.core.util.snapshot.state.StateFactory;
 import io.siddhi.extension.common.S3ServiceClient;
 import io.siddhi.extension.common.beans.BucketConfig;
 import io.siddhi.extension.common.beans.ClientConfig;
-import io.siddhi.extension.io.s3.sink.internal.publisher.EventPublisherThreadPoolExecutor;
 import io.siddhi.extension.common.utils.S3Constants;
+import io.siddhi.extension.io.s3.sink.internal.publisher.EventPublisherThreadPoolExecutor;
 import io.siddhi.query.api.definition.AbstractDefinition;
 import io.siddhi.query.api.definition.Attribute;
 import org.apache.log4j.Logger;
@@ -50,8 +50,11 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * {@code S3UploadFunctionProcessor} handles uploading files to S3 buckets.
+ */
 @Extension(
-        name = "upload",
+        name = "uploadFile",
         namespace = "s3",
         description = "Uploads a file to an Amazon AWS S3 bucket",
         parameters = {
@@ -280,7 +283,8 @@ public class S3UploadFunctionProcessor extends StreamFunctionProcessor {
         private final Path path;
         private final StorageClass storageClass;
 
-        UploadTask(ClientConfig clientConfig, BucketConfig bucketConfig, String key, Path path, StorageClass storageClass) {
+        UploadTask(ClientConfig clientConfig, BucketConfig bucketConfig, String key, Path path,
+                   StorageClass storageClass) {
             this.clientConfig = clientConfig;
             this.bucketConfig = bucketConfig;
             this.key = key;

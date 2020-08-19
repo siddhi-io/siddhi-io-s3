@@ -48,6 +48,9 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * {@code S3CopyFunctionProcessor} handles copying object within S3 buckets.
+ */
 @Extension(
         name = "copy",
         namespace = "s3",
@@ -146,7 +149,7 @@ import java.util.concurrent.TimeUnit;
                 ),
                 @ParameterOverload(
                         parameterNames = {"from.bucket.name", "from.key", "bucket.name", "key", "async",
-                                "credential.provider.class",}
+                                "credential.provider.class"}
                 ),
                 @ParameterOverload(
                         parameterNames = {"from.bucket.name", "from.key", "bucket.name", "key", "async",

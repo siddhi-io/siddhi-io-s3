@@ -18,8 +18,8 @@
 
 package io.siddhi.extension.io.s3.sink.internal.publisher;
 
-import io.siddhi.extension.io.s3.sink.internal.beans.SinkConfig;
 import io.siddhi.extension.common.S3ServiceClient;
+import io.siddhi.extension.io.s3.sink.internal.beans.SinkConfig;
 import io.siddhi.extension.io.s3.sink.internal.utils.MapperTypes;
 import org.apache.log4j.Logger;
 
