@@ -16,7 +16,7 @@
  * under the License.
  */
 
-package io.siddhi.extension.io.s3.sink.internal.utils;
+package io.siddhi.extension.common.utils;
 
 
 import org.apache.log4j.Logger;

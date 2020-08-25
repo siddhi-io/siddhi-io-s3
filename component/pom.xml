@@ -165,6 +165,8 @@
                         </Private-Package>
                         <Export-Package>
                             io.siddhi.extension.io.s3.*,
+                            io.siddhi.extension.execution.s3.*,
+                            io.siddhi.extension.common.*,
                         </Export-Package>
                         <Import-Package>
                             software.amazon.awssdk.*;version="${aws.sdk.version.range}",

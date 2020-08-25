@@ -16,7 +16,7 @@
  *  under the License.
  */
 
-package io.siddhi.extension.io.s3.sink.internal.utils;
+package io.siddhi.extension.common.utils;
 
 /**
  * Holds constants to be used in S3 sink.
@@ -35,8 +35,20 @@ public class S3Constants {
     public static final String VERSIONING_ENABLED = "versioning.enabled";
     public static final String OBJECT_PATH = "object.path";
 
+    // Function parameters
+    public static final String FILE_PATH = "file.path";
+    public static final String KEY = "key";
+    public static final String FROM_BUCKET_NAME = "from.bucket.name";
+    public static final String FROM_KEY = "from.key";
+    public static final String ASYNC = "async";
+
     // Defaults
     public static final String DEFAULT_CONTENT_TYPE = "application/octet-stream";
+
+    // Thread pool executor constants
+    public static final int CORE_POOL_SIZE = 10;
+    public static final int MAX_POOL_SIZE = 20;
+    public static final int KEEP_ALIVE_TIME_MS = 5000;
 
     private S3Constants() {
         // To prevent initialization of the class.
