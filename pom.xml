@@ -174,7 +174,7 @@
         <aws.sdk.version>2.10.1</aws.sdk.version>
         <aws.sdk.version.range>[2.10.1, 2.11.0)</aws.sdk.version.range>
 
-        <apache.httpclient.version>4.5.10</apache.httpclient.version>
+        <apache.httpclient.version>4.5.13</apache.httpclient.version>
         <apache.httpclient.version.range>[4.5.0,4.6.0)</apache.httpclient.version.range>
 
         <json.version>2.8.5</json.version>
