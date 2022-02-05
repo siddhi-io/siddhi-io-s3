@@ -21,7 +21,6 @@ package io.siddhi.extension.io.s3.sink.internal.publisher;
 import io.siddhi.extension.common.S3ServiceClient;
 import io.siddhi.extension.io.s3.sink.internal.beans.SinkConfig;
 import io.siddhi.extension.io.s3.sink.internal.utils.MapperTypes;
-import org.apache.log4j.Logger;
 
 import java.nio.file.Paths;
 
@@ -29,7 +28,6 @@ import java.nio.file.Paths;
  * {@code PublisherTask} is responsible for each event object to be uploaded to a S3 bucket.
  */
 public class PublisherTask implements Runnable {
-    private static final Logger logger = Logger.getLogger(PublisherTask.class);
 
     private final S3ServiceClient client;
     private final int offset;

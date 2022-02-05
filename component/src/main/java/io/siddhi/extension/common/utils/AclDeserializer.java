@@ -18,8 +18,8 @@
 
 package io.siddhi.extension.common.utils;
 
-
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import software.amazon.awssdk.services.s3.model.Grant;
 import software.amazon.awssdk.services.s3.model.Grantee;
 import software.amazon.awssdk.services.s3.model.Permission;
@@ -36,7 +36,7 @@ import java.util.List;
  */
 public class AclDeserializer {
 
-    private static final Logger logger = Logger.getLogger(AclDeserializer.class);
+    private static final Logger logger = LogManager.getLogger(AclDeserializer.class);
 
     private static final String CANONICAL_GRANTEE_TYPE = "canonical";
     private static final String GROUP_GRANTEE_TYPE = "group";
