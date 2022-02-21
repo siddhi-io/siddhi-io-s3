@@ -23,7 +23,8 @@ import io.siddhi.core.exception.SiddhiAppRuntimeException;
 import io.siddhi.extension.common.beans.BucketConfig;
 import io.siddhi.extension.common.beans.ClientConfig;
 import io.siddhi.extension.common.utils.AclDeserializer;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.AwsSessionCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
@@ -72,7 +73,7 @@ import java.util.List;
  * {@code S3ServiceClient} act as the proxy layer to work with the S3 endpoint.
  */
 public class S3ServiceClient {
-    private static final Logger logger = Logger.getLogger(S3ServiceClient.class);
+    private static final Logger logger = LogManager.getLogger(S3ServiceClient.class);
     private static final String DEFAULT_CHARSET = "UTF-8";
 
     private S3Client client;

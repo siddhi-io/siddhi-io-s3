@@ -36,7 +36,8 @@ import io.siddhi.extension.common.utils.S3Constants;
 import io.siddhi.extension.io.s3.sink.internal.publisher.EventPublisherThreadPoolExecutor;
 import io.siddhi.query.api.definition.AbstractDefinition;
 import io.siddhi.query.api.definition.Attribute;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -45,6 +46,7 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
+
 
 /**
  * {@code S3DeleteFunctionProcessor} handles deletes objects from S3 buckets.
@@ -130,7 +132,7 @@ import java.util.concurrent.TimeUnit;
         }
 )
 public class S3DeleteFunctionProcessor extends StreamFunctionProcessor {
-    private static final Logger logger = Logger.getLogger(S3DeleteFunctionProcessor.class);
+    private static final Logger logger = LogManager.getLogger(S3DeleteFunctionProcessor.class);
 
     private BlockingQueue<Runnable> taskQueue;
     private EventPublisherThreadPoolExecutor executor;

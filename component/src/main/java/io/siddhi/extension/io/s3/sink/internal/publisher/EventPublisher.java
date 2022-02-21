@@ -24,7 +24,8 @@ import io.siddhi.extension.common.S3ServiceClient;
 import io.siddhi.extension.common.utils.S3Constants;
 import io.siddhi.extension.io.s3.sink.S3Sink;
 import io.siddhi.extension.io.s3.sink.internal.beans.SinkConfig;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.concurrent.TimeUnit;
 
@@ -32,7 +33,7 @@ import java.util.concurrent.TimeUnit;
  * Handles queueing events for publish to S3.
  */
 public class EventPublisher {
-    private static final Logger logger = Logger.getLogger(EventPublisher.class);
+    private static final Logger logger = LogManager.getLogger(EventPublisher.class);
 
     private final SinkConfig config;
     private final S3Sink.SinkState state;

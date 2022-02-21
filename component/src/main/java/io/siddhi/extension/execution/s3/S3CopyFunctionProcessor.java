@@ -37,7 +37,8 @@ import io.siddhi.extension.common.utils.S3Constants;
 import io.siddhi.extension.io.s3.sink.internal.publisher.EventPublisherThreadPoolExecutor;
 import io.siddhi.query.api.definition.AbstractDefinition;
 import io.siddhi.query.api.definition.Attribute;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import software.amazon.awssdk.services.s3.model.StorageClass;
 
 import java.util.ArrayList;
@@ -47,6 +48,7 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
+
 
 /**
  * {@code S3CopyFunctionProcessor} handles copying object within S3 buckets.
@@ -184,7 +186,7 @@ import java.util.concurrent.TimeUnit;
         }
 )
 public class S3CopyFunctionProcessor extends StreamFunctionProcessor {
-    private static final Logger logger = Logger.getLogger(S3CopyFunctionProcessor.class);
+    private static final Logger logger = LogManager.getLogger(S3CopyFunctionProcessor.class);
 
     private BlockingQueue<Runnable> taskQueue;
     private EventPublisherThreadPoolExecutor executor;

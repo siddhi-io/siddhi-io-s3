@@ -36,7 +36,8 @@ import io.siddhi.extension.common.utils.S3Constants;
 import io.siddhi.extension.io.s3.sink.internal.beans.SinkConfig;
 import io.siddhi.extension.io.s3.sink.internal.publisher.EventPublisher;
 import io.siddhi.query.api.definition.StreamDefinition;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.nio.ByteBuffer;
 import java.util.HashMap;
@@ -146,7 +147,7 @@ import java.util.concurrent.atomic.AtomicInteger;
         }
 )
 public class S3Sink extends Sink<S3Sink.SinkState> {
-    private static final Logger logger = Logger.getLogger(S3Sink.class);
+    private static final Logger logger = LogManager.getLogger(S3Sink.class);
 
     private EventPublisher publisher;
     private SinkConfig config;
