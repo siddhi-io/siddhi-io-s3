@@ -19,11 +19,14 @@ For information on <a target="_blank" href="https://siddhi.io/">Siddhi</a> and i
 
 ## Latest API Docs 
 
-Latest API Docs is <a target="_blank" href="https://siddhi-io.github.io/siddhi-io-s3/api/1.0.3">1.0.3</a>.
+Latest API Docs is <a target="_blank" href="https://siddhi-io.github.io/siddhi-io-s3/api/1.0.4">1.0.4</a>.
 
 ## Features
 
-* <a target="_blank" href="https://siddhi-io.github.io/siddhi-io-s3/api/1.0.3/#s3-sink">s3</a> *(<a target="_blank" href="http://siddhi.io/en/v5.1/docs/query-guide/#sink">Sink</a>)*<br> <div style="padding-left: 1em;"><p><p style="word-wrap: break-word;margin: 0;">S3 sink publishes events as Amazon AWS S3 buckets.</p></p></div>
+* <a target="_blank" href="https://siddhi-io.github.io/siddhi-io-s3/api/1.0.4/#copy-stream-function">copy</a> *(<a target="_blank" href="http://siddhi.io/en/v5.1/docs/query-guide/#stream-function">Stream Function</a>)*<br> <div style="padding-left: 1em;"><p><p style="word-wrap: break-word;margin: 0;">Copy a file within Amazon AWS S3 buckets.</p></p></div>
+* <a target="_blank" href="https://siddhi-io.github.io/siddhi-io-s3/api/1.0.4/#delete-stream-function">delete</a> *(<a target="_blank" href="http://siddhi.io/en/v5.1/docs/query-guide/#stream-function">Stream Function</a>)*<br> <div style="padding-left: 1em;"><p><p style="word-wrap: break-word;margin: 0;">Delete an object from an Amazon AWS S3 bucket</p></p></div>
+* <a target="_blank" href="https://siddhi-io.github.io/siddhi-io-s3/api/1.0.4/#uploadfile-stream-function">uploadFile</a> *(<a target="_blank" href="http://siddhi.io/en/v5.1/docs/query-guide/#stream-function">Stream Function</a>)*<br> <div style="padding-left: 1em;"><p><p style="word-wrap: break-word;margin: 0;">Uploads a file to an Amazon AWS S3 bucket</p></p></div>
+* <a target="_blank" href="https://siddhi-io.github.io/siddhi-io-s3/api/1.0.4/#s3-sink">s3</a> *(<a target="_blank" href="http://siddhi.io/en/v5.1/docs/query-guide/#sink">Sink</a>)*<br> <div style="padding-left: 1em;"><p><p style="word-wrap: break-word;margin: 0;">S3 sink publishes events as Amazon AWS S3 buckets.</p></p></div>
 
 ## Dependencies 
 
