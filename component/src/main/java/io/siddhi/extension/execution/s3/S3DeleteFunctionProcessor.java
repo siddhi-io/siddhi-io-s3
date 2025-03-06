@@ -239,7 +239,7 @@ public class S3DeleteFunctionProcessor extends StreamFunctionProcessor {
             S3ServiceClient client = new S3ServiceClient(clientConfig);
             client.deleteObject(bucketName, key);
 
-            logger.debug("Object '" + key + "' deleted from the bucket '" + bucketName + "'.");
+            logger.debug("Object '{}' deleted from the bucket '{}'.", key, bucketName);
         }
     }
 }

@@ -27,6 +27,7 @@ import software.amazon.awssdk.services.s3.model.Type;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * {@code ACLDeserializer} de-serializes bucket ACL from ACL definition and generate list of {@code Grant}s.
@@ -57,12 +58,13 @@ public class AclDeserializer {
             }
             Permission permission = getPermission(parts[2]);
             if (permission == null) {
-                logger.warn("Invalid bucket permission '" + parts[2] + "' specified in grant " + grantString +
-                        " in the bucket ACL. Possible values are FULL_CONTROL, READ, WRITE, READ_ACP, and WRITE_ACP.");
+                logger.warn("Invalid bucket permission '{}' specified in grant {} in the bucket ACL. " +
+                                "Possible values are FULL_CONTROL, READ, WRITE, READ_ACP, and WRITE_ACP.",
+                        parts[2], grantString);
                 continue;
             }
             Grantee grantee = null;
-            switch (parts[0].toLowerCase()) {
+            switch (parts[0].toLowerCase(Locale.ENGLISH)) {
                 case CANONICAL_GRANTEE_TYPE: {
                     grantee = Grantee.builder().type(Type.CANONICAL_USER).id(parts[1]).build();
                     break;
@@ -70,9 +72,9 @@ public class AclDeserializer {
                 case GROUP_GRANTEE_TYPE:
                     String uri = getGroupUri(parts[1]);
                     if (uri == null) {
-                        logger.warn("Invalid group grantee '" + parts[1] + "' specified in grant " + grantString +
-                                " in the bucket ACL. Possible values are AllUsers, AuthenticatedUsers, and " +
-                                "LogDelivery.");
+                        logger.warn("Invalid group grantee '{}' specified in grant {} in the bucket ACL. " +
+                                        "Possible values are AllUsers, AuthenticatedUsers, and LogDelivery.",
+                                parts[1], grantString);
                         continue;
                     }
                     grantee = Grantee.builder().type(Type.GROUP).uri(uri).build();
@@ -82,8 +84,9 @@ public class AclDeserializer {
                     break;
                 default:
                     // Not a valid grantee, hence ignoring.
-                    logger.warn("Invalid grantee '" + parts[0] + "' specified in grant " + grantString +
-                            " in the bucket ACL. Possible values are canonical, group, and email.");
+                    logger.warn("Invalid grantee '{}' specified in grant {} in the bucket ACL. " +
+                                    "Possible values are canonical, group, and email.",
+                            parts[0], grantString);
                     break;
             }
             grantList.add(Grant.builder().grantee(grantee).permission(getPermission(parts[2])).build());
@@ -101,7 +104,7 @@ public class AclDeserializer {
     }
 
     private static String getGroupUri(String groupString) {
-        switch (groupString.toLowerCase()) {
+        switch (groupString.toLowerCase(Locale.ENGLISH)) {
             case "logdelivery": {
                 return "http://acs.amazonaws.com/groups/s3/LogDelivery";
             }
