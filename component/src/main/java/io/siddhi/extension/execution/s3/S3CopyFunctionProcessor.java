@@ -311,8 +311,8 @@ public class S3CopyFunctionProcessor extends StreamFunctionProcessor {
             client.ensureBucketAvailability(bucketConfig);
             client.copyObject(fromBucketName, fromKey, bucketConfig.getBucketName(), key, storageClass);
 
-            logger.debug("Object '" + fromKey + "' in bucket '" + fromBucketName + "' is copied to '" + key +
-                    "' in bucket '" + bucketConfig.getBucketName() + "'.");
+            logger.debug("Object '{}' in bucket '{}' is copied to '{}' in bucket '{}'.", fromKey, fromBucketName, key,
+                    bucketConfig.getBucketName());
         }
     }
 }

@@ -105,7 +105,7 @@ public class S3ServiceClient {
         }
 
         // Create the bucket.
-        logger.debug("Bucket '" + bucketConfig.getBucketName() + "' does not exist, hence creating.");
+        logger.debug("Bucket '{}' does not exist, hence creating.", bucketConfig.getBucketName());
         CreateBucketRequest createBucketRequest = CreateBucketRequest
                 .builder()
                 .bucket(bucketConfig.getBucketName())

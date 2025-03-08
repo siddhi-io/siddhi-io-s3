@@ -299,8 +299,7 @@ public class S3UploadFunctionProcessor extends StreamFunctionProcessor {
             client.ensureBucketAvailability(bucketConfig);
             client.uploadObject(bucketConfig.getBucketName(), key, path, storageClass);
 
-            logger.debug("Object '" + key + "' uploaded to S3 bucket '" + bucketConfig.getBucketName() +
-                    "' successfully.");
+            logger.debug("Object '{}' uploaded to S3 bucket '{}' successfully.", key, bucketConfig.getBucketName());
         }
     }
 }

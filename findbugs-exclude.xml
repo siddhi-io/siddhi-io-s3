@@ -27,5 +27,24 @@
         <Package name="io.siddhi.extension.execution.s3.*" />
         <Bug pattern="SIC_INNER_SHOULD_BE_STATIC" />
     </Match>
-
+    <Match>
+        <Class name="io.siddhi.extension.common.S3ServiceClient" />
+        <Bug pattern="PATH_TRAVERSAL_IN" />
+    </Match>
+    <Match>
+        <Class name="io.siddhi.extension.common.utils.AclDeserializer" />
+        <Bug pattern="IMPROPER_UNICODE" />
+    </Match>
+    <Match>
+        <Class name="io.siddhi.extension.execution.s3.S3UploadFunctionProcessor" />
+        <Bug pattern="PATH_TRAVERSAL_IN" />
+    </Match>
+    <Match>
+        <Class name="io.siddhi.extension.io.s3.sink.internal.publisher.PublisherTask" />
+        <Bug pattern="PATH_TRAVERSAL_IN" />
+    </Match>
+    <Match>
+        <Class name="io.siddhi.extension.io.s3.sink.internal.utils.MapperTypes" />
+        <Bug pattern="IMPROPER_UNICODE" />
+    </Match>
 </FindBugsFilter>
